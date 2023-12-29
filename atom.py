@@ -1,13 +1,14 @@
 from exceptions import *
+from geometries import Point
 
 
-class Atom:
+class Atom(Point):
     def __init__(self, source: str) -> None:
         """
         Constructor for creating the atom structure from a line of text
         loaded from the source .pdb file.
 
-        :param source: single line from which structure is created
+        :param source: single line representing atom from which object is created
 
         Source: https://www.biostat.jhsph.edu/~iruczins/teaching/260.655/links/pdbformat.pdf
 
@@ -30,6 +31,7 @@ class Atom:
         77-78   right   str     Element symbol
         79-80   ----    str     (optional) Charge
         """
+        super().__init__()
         self.atom_type = None               # 1-4
         self.serial_number = None           # 7-11
         self.name = None                    # 13-16
@@ -38,23 +40,36 @@ class Atom:
         self.chain_identifier = None        # 22
         self.residue_sequence_num = None    # 23-26
         self.res_insert_code = None         # 27
-        self.X = None                       # 31-38
-        self.Y = None                       # 39-46
-        self.Z = None                       # 47-54
+        self.x = None                       # 31-38
+        self.y = None                       # 39-46
+        self.z = None                       # 47-54
         self.occupancy = None               # 55-60
         self.temperature_factor = None      # 61-66
         self.segment_identifier = None      # 73-76
         self.element_symbol = None          # 77-78
         self.charge = None                  # 79-80
 
+        self.is_valid = True
+        self.source = source
+
         try:
             self.create_from_source(source)
         except InvalidSourceDataException as e:
+            self.is_valid = False
             print(f"[ERROR]: Atom - invalid source data: {e}")
 
-        print(f"Source: {source}")
-
     def create_from_source(self, source: str) -> None:
+        """
+        Parse a single line from the source .pdb file, parsing information
+        from it and validating data validity, setting all the fields of this
+        class object.
+
+        Throw `InvalidSourceDataException` in case of an error.
+
+        :param source: a line containing data from the source .pdb file
+                       representing atom in the molecule structure
+        :return: None
+        """
         atom_type = source[0:6]
         if atom_type != "ATOM" and atom_type != "HETATM":
             raise InvalidSourceDataException(f"'{atom_type}' is not a valid atom type")
@@ -85,19 +100,19 @@ class Atom:
 
         coordinate_X = source[30:38].strip()
         try:
-            self.X = float(coordinate_X)
+            self.x = float(coordinate_X)
         except ValueError:
             raise InvalidSourceDataException(f"'{coordinate_X}' is not a valid float number")
 
         coordinate_Y = source[38:46].strip()
         try:
-            self.Y = float(coordinate_Y)
+            self.y = float(coordinate_Y)
         except ValueError:
             raise InvalidSourceDataException(f"'{coordinate_Y}' is not a valid float number")
 
         coordinate_Z = source[46:54].strip()
         try:
-            self.Z = float(coordinate_Z)
+            self.z = float(coordinate_Z)
         except ValueError:
             raise InvalidSourceDataException(f"'{coordinate_Z}' is not a valid float number")
 
@@ -131,13 +146,14 @@ class Atom:
                   f"Chain identifier: '{self.chain_identifier}'\n"
                   f"Residue sequence number: {self.residue_sequence_num}\n"
                   f"Code for insertions of residues: '{self.res_insert_code}'\n"
-                  f"X: {self.X}\n"
-                  f"Y: {self.Y}\n"
-                  f"Z: {self.Z}\n"
+                  f"X: {self.x}\n"
+                  f"Y: {self.y}\n"
+                  f"Z: {self.z}\n"
                   f"Occupancy: {self.occupancy}\n"
                   f"Temperature factor: {self.temperature_factor}\n"
                   f"Segment identifier: '{self.segment_identifier}'\n"
                   f"Element symbol: '{self.element_symbol}'\n"
                   f"Charge: '{self.charge}'")
+        output = f"Atom {self.name} - <{self.x}, {self.y}, {self.z}>"
         return output
 
