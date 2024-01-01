@@ -1,0 +1,2 @@
+./dataset/00K_1a46_1.pdb
+./dataset/00P_1d9i_0.pdb

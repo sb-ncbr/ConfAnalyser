@@ -22,6 +22,10 @@ def load_names(file_name: str) -> dict[str, list[list[str]]]:
     return out
 
 
+def load_file_list(file_name: str) -> list[str]:
+    return load_file(file_name)
+
+
 def print_dict(dct):
     for name in dct:
         print(f"Ligand: {name}")
@@ -30,13 +34,18 @@ def print_dict(dct):
             print(f"   -> {out}")
 
 
-if __name__ == "__main__":
-    data = load_file("./dataset/00K_1a46_1.pdb")
-    Molecule.names = load_names("./dataset/atom_names.txt")
-    hexane = Cyclohexane(data)
-    print_dict(hexane.names)
-    print(f"Got: {hexane}, expected: CHAIR\n")
+def run():
+    files = load_file("./dataset/file_list.txt")
+    names = load_names("./dataset/atom_names.txt")
+    print(f"Loaded:")
+    print_dict(names)
+    Molecule.names = names
 
-    # data = load_file("./dataset/00P_1d9i_0.pdb")
-    # molecule = Cyclohexane(data)
-    # print(f"Got: {molecule}, expected: UNKNOWN\n")
+    for file in files:
+        data = load_file(file.replace("\n", "").replace("\r", ""))
+        molecule = Cyclohexane(data)
+        print(molecule)
+
+
+if __name__ == "__main__":
+    run()
