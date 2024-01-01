@@ -1,7 +1,7 @@
 from typing import *
 from atom import Atom
 from cyclohexane import Cyclohexane
-from molecule import Molecule
+from molecule import Molecule, MoleculeType
 
 
 def load_file(file_name: str) -> list[str]:
@@ -35,16 +35,34 @@ def print_dict(dct):
 
 
 def run():
-    files = load_file("./dataset/file_list.txt")
-    names = load_names("./dataset/atom_names.txt")
-    print(f"Loaded:")
-    print_dict(names)
-    Molecule.names = names
+    molecule_type = MoleculeType.Cyclohexane
+    files = load_file("./filtered_ligands/paths_to_pdbs.txt")
+    # files = load_file("./dataset/sing_test_file_path")
+    names = load_names("./filtered_ligands/atom_names.txt")
+    # print(f"Loaded:")
+    # print_dict(names)
+    Molecule.initialize(names)
 
     for file in files:
-        data = load_file(file.replace("\n", "").replace("\r", ""))
-        molecule = Cyclohexane(data)
-        print(molecule)
+        filename = file.replace("\n", "").replace("\r", "")
+        data = load_file(filename)
+        molecule: Optional[Molecule] = None  # TODO: Remove later when we got certainty matching will work
+
+        match molecule_type:
+            case MoleculeType.Cyclohexane:
+                molecule = Cyclohexane(data)
+            case MoleculeType.Cyclopentane:
+                ...
+            case MoleculeType.Benzene:
+                ...
+            case MoleculeType.Oxane:
+                ...
+
+        Molecule.molecules.append(molecule)
+        # print(f"{filename.split('/')[-1]}: {molecule.conformation.name.upper()}")
+
+    # print_dict(Molecule.names)
+    Molecule.molecules[0].print_statistics()
 
 
 if __name__ == "__main__":

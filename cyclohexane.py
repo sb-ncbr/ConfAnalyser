@@ -2,16 +2,24 @@ from rings import SixAtomRing
 from atom import Atom
 from geometries import Plane
 from angle import dihedral_angle
+from molecule import MoleculeType, Conformation
 
 
 class Cyclohexane(SixAtomRing):
     def __init__(self, source_file: list[str]):
+        # Initialize the parent structure
         super().__init__()
+        self.molecule_type = MoleculeType.Cyclohexane
+        self.set_conformations()
+        self.conformation = Conformation.Undefined
+
+        # Set the needed parameters
         self.source_file: list[str] = source_file
         # TODO: add validity check for when creating the molecule
         self.is_valid = True
 
         # TODO: Move tolerances into separate class to be loadable from file
+        # To be replaced with Molecule's `config` parameter
         self.tolerance_in = 0.1
         self.tolerance_flat_in = 0.1
         self.tolerance_out = 0.6
@@ -19,51 +27,69 @@ class Cyclohexane(SixAtomRing):
         self.angle_tw_boat = 17.1
         self.angle_tolerance = 1.0
 
-        self.create_from_source(source_file)
-        self.ligand = self.atoms[0].residue_name if self.atoms else "Ligand not recognized!"  # TODO: raise error?
+        try:
+            self.create_from_source(source_file)
+            self.ligand = self.atoms[0].residue_name if self.atoms else "Ligand not recognized!"  # TODO: raise error?
 
-        self.sort_atoms()
-        self.analyze()
+            self.sort_atoms()
+            self.analyze()
+        except Exception as e:
+            print(e)
 
     def sort_atoms(self) -> None:
+        """
+        Goes over the list of names of atoms loaded from `atom_names` file and maps
+        existing atoms to the same order of atoms as specified in the said file.
+        """
         new_lst = []
-        for atom_name in self.names[self.ligand][0]:
-            for atom in self.atoms:
-                if atom.name == atom_name:
-                    print(f"To atom name {atom_name} assigning atom {atom}")
-                    new_lst.append(atom)
+        for atom_name_list in self.names[self.ligand]:
+            atom_name_set = set(atom_name_list)
+            our_atoms = set([x.name for x in self.atoms])
+            if atom_name_set == our_atoms:
+                for atom_name in atom_name_list:
+                    for atom in self.atoms:
+                        if atom.name == atom_name:
+                            # print(f"To atom name {atom_name} assigning atom {atom}")
+                            new_lst.append(atom)
+                            continue
         if len(new_lst) != 6:
             # TODO: throw some exception, handle, idk
-            print("Not all atoms were found!")
+            # print("Not all atoms were found!")
+            pass
         self.atoms = new_lst
 
     def create_from_source(self, source: list[str]) -> None:
+        """
+        Creates atoms from the source file
+        """
         for i in range(6):
             self.atoms.append(Atom(source[i + 1]))
 
     def __str__(self) -> str:
         out = "Molecule of Cyclohexane:\n"
-        out += self.conformation
+        out += self.conformation.name
         return out
 
     def analyze(self):
-        print("Analyzing..")
-        for atom in self.atoms:
-            print(atom)
+        """
+        Runs the analysis of the molecule, first finding the main plane of the
+        molecule, after that it checks for the possible conformations to be true.
+        """
+
         self.find_plane(self.tolerance_in)
-        print(f"Begin at: {self.begin}")
+
         if self.is_flat():
-            self.conformation = "FLAT"
+            self.conformation = Conformation.Flat
         elif self.is_half_chair():
-            self.conformation = "HALF CHAIR"
+            self.conformation = Conformation.Half_Chair
         elif self.is_chair():
-            self.conformation = "CHAIR"
+            self.conformation = Conformation.Chair
         elif self.is_boat():
-            self.conformation = "BOAT"
+            self.conformation = Conformation.Boat
         elif self.is_twisted_boat():
-            self.conformation = "TWISTED BOAT"
+            self.conformation = Conformation.Twisted_Boat
         else:
-            self.conformation = "UNKNOWN"
+            self.conformation = Conformation.Undefined
 
     def is_flat(self) -> bool:
         """
@@ -94,7 +120,7 @@ class Cyclohexane(SixAtomRing):
         return (plane.is_on_plane(self.index(2), self.tolerance_flat_in) !=
                 plane.is_on_plane(self.index(5), self.tolerance_flat_in)) and \
             plane.is_on_plane(self.index(4), self.tolerance_flat_in) and \
-            (right_dist > self.tolerance_out != left_dist > self.tolerance_out)
+            ((right_dist > self.tolerance_out) != (left_dist > self.tolerance_out))
 
     def is_chair(self) -> bool:
         """
@@ -108,8 +134,6 @@ class Cyclohexane(SixAtomRing):
         plane = Plane(self.index(0), self.index(1), self.index(3))
         right_dist = plane.distance_from(self.index(2))
         left_dist = plane.distance_from(self.index(5))
-        print(right_dist)
-        print(left_dist)
         return abs(right_dist) > self.tolerance_out and \
             abs(left_dist) > self.tolerance_out and \
             (right_dist * left_dist < 0)

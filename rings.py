@@ -17,17 +17,17 @@ class SixAtomRing(Ring):
         super().__init__()
 
     def find_plane(self, tolerance: float, dist1: int = 1, dist2: int = 3, dist3: int = 4) -> None:
-        print(f"[find_plane@SixAtomRing] CALLED")
+        # print(f"[find_plane@SixAtomRing] CALLED")
         distance = float("inf")
 
         for i in range(6):
-            print(f"\n[find_plane@SixAtomRing] ITERATION {i}")
-            print(f"[find_plane@SixAtomRing] Checking atoms: {self.atoms[i % 6], self.atoms[(i + dist1) % 6], self.atoms[(i + dist2) % 6]}")
+            # print(f"\n[find_plane@SixAtomRing] ITERATION {i}")
+            # print(f"[find_plane@SixAtomRing] Checking atoms: {self.atoms[i % 6], self.atoms[(i + dist1) % 6], self.atoms[(i + dist2) % 6]}")
             plane = Plane(self.atoms[i % 6], self.atoms[(i + dist1) % 6], self.atoms[(i + dist2) % 6])
             dist_from_plane = abs(plane.distance_from(self.atoms[(i + dist3) % 6]))
-            print(f"[find_plane@SixAtomRing] Atom [{i}]: {self.atoms[i]}")
-            print(f"[find_plane@SixAtomRing] Distance {i}: {dist_from_plane}")
-            print(f"[find_plane@SixAtomRing] Plane: < {plane.a}, {plane.b}, {plane.c}, {plane.d} >")
+            # print(f"[find_plane@SixAtomRing] Atom [{i}]: {self.atoms[i]}")
+            # print(f"[find_plane@SixAtomRing] Distance {i}: {dist_from_plane}")
+            # print(f"[find_plane@SixAtomRing] Plane: < {plane.a}, {plane.b}, {plane.c}, {plane.d} >")
             if dist_from_plane < distance:
                 self.begin = i
                 distance = dist_from_plane
