@@ -43,7 +43,7 @@ def run():
     # files = load_file("./dataset/sing_test_file_path")
     names = load_names("./filtered_ligands/atom_names.txt")
     # print(f"Loaded:")
-    print_dict(names)
+    # print_dict(names)
 
     Molecule.initialize(names)
 

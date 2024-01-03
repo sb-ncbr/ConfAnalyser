@@ -47,13 +47,13 @@ class Config:
         self.benzene = BenzeneRecord()
         self.oxane = OxaneRecord()
 
+        # Aliases to use instead of full names, when one feel brave
         self.cp = self.cyclopentane
         self.ch = self.cyclohexane
         self.b = self.benzene
         self.o = self.oxane
 
         self.load_config()
-        pass
 
     def config_file_exist(self):
         """
@@ -70,6 +70,13 @@ class Config:
             self.create_config_template()
 
         lines = self.read_file()
+
+        if len(lines) != 23 and len(lines) != 24:
+            # TODO: Better message
+            print("Config file not loaded properly! Delete the `config.txt` file in the folder with main file and try "
+                  "again.")
+            exit(-1)
+
         self.ch.t_in = self.process_line(lines[3])
         self.ch.t_out = self.process_line(lines[4])
         self.ch.t_flat_in = self.process_line(lines[5])
@@ -140,5 +147,5 @@ Oxane:
 Tolerance in: 0.1
 Tolerance out: 0.3"""
 
-        with open(self.get_config_file_path(), "a") as file:
+        with open(self.get_config_file_path(), "w") as file:
             file.write(template)
