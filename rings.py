@@ -17,6 +17,11 @@ class SixAtomRing(Ring):
         super().__init__()
 
     def find_plane(self, tolerance: float, dist1: int = 1, dist2: int = 3, dist3: int = 4) -> None:
+        """
+        Find the best suitable plane to start working with and set the `begin` parameter
+        of the molecule to be used in other conformation validators.
+        Also decide whether the molecule even has any valid plane at all.
+        """
         # print(f"[find_plane@SixAtomRing] CALLED")
         distance = float("inf")
 

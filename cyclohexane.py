@@ -29,7 +29,11 @@ class Cyclohexane(SixAtomRing):
 
     def validate_atoms(self) -> None:
         """
-        Does magic and shoots out sparks
+        Validates whether all the atoms of a molecule have their name
+        present in the names file and then creates the ordering
+        of atoms based on the order from the names file. In case of
+        duplicate names within the same index of atom position, error
+        out and cancel processing of this molecule as a result.
         """
         new_lst = [None for _ in range(6)]
         for atom in self.atoms:

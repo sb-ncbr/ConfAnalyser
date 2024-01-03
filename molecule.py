@@ -35,12 +35,15 @@ class Molecule:
 
     @staticmethod
     def initialize(names: dict[str, list[list[str]]]):
+        """
+        Initializes the static parameters of the entire Molecule class
+        on the first call.
+        """
         if Molecule.names is None:
             Molecule.names = names
 
         if Molecule.config is None:
             Molecule.config = Config()
-
 
     def __init__(self):
         # A list of all atoms within a given molecule
@@ -61,6 +64,10 @@ class Molecule:
         print(f"{'TOTAL:':14}{total}")
 
     def set_conformations(self) -> None:
+        """
+        Sets the correct order of possible conformations for each molecule
+        which are later used for printing statistics.
+        """
         match self.molecule_type:
             case MoleculeType.Cyclohexane:
                 self.set_conf_cyclohexane()
