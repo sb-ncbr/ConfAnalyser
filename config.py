@@ -30,6 +30,7 @@ class OxaneRecord:
         self.t_in = None
         self.t_out = None
 
+
 class Config:
     """
     Class which loads the properties from the file in the main working directory
@@ -55,9 +56,16 @@ class Config:
         pass
 
     def config_file_exist(self):
-        return Path(self.get_path()).is_file()
+        """
+        Validates whether the file on a set config path exists.
+        """
+        return Path(self.get_config_file_path()).is_file()
 
-    def load_config(self):
+    def load_config(self) -> None:
+        """
+        Validates if config file exists. IF it does not, create it based on template.
+        After that, load the values into their fields.
+        """
         if not self.config_file_exist():
             self.create_config_template()
 
@@ -80,19 +88,34 @@ class Config:
         self.o.t_in = self.process_line(lines[21])
         self.o.t_out = self.process_line(lines[22])
 
-    def get_path(self) -> str:
+    def get_config_file_path(self) -> str:
         return f"./{self.config_file_name}"
 
     @staticmethod
     def process_line(line: str) -> float:
+        """
+        Processes a single line from the config file, taking only float number from
+        after the `:` symbol on a given line. Also resolves possible user error
+        by using floating point number with `,` instead of `.`
+        :return: the loaded floating point number from the line
+        """
         return float(line.split(":")[1].replace(",", ".").replace("\n", "").replace("\r", ""))
 
     def read_file(self) -> list[str]:
-        with open(self.get_path(), "r") as file:
+        """
+        Reads the content of the config file, splits it into 
+        list of lines and returns them.
+        :return: 
+        """
+        with open(self.get_config_file_path(), "r") as file:
             lines = file.readlines()
             return lines
 
-    def create_config_template(self):
+    def create_config_template(self) -> None:
+        """
+        A template config file that will be used when no config is present.
+        This function creates the config file with the content of the `template` variable.
+        """
         template = """ConfAnalyzer config file. 
 Make sure to only edit numeric names and not any name before it.
 Cyclohexane:
@@ -117,5 +140,5 @@ Oxane:
 Tolerance in: 0.1
 Tolerance out: 0.3"""
 
-        with open(self.get_path(), "a") as file:
+        with open(self.get_config_file_path(), "a") as file:
             file.write(template)
