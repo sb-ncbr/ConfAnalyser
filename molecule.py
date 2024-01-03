@@ -41,6 +41,7 @@ class Molecule:
         if Molecule.config is None:
             Molecule.config = Config()
 
+
     def __init__(self):
         # A list of all atoms within a given molecule
         self.atoms: list[Atom] = []

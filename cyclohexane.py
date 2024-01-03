@@ -18,15 +18,6 @@ class Cyclohexane(SixAtomRing):
         # TODO: add validity check for when creating the molecule
         self.is_valid = True
 
-        # TODO: Move tolerances into separate class to be loadable from file
-        # To be replaced with Molecule's `config` parameter
-        self.tolerance_in = 0.1
-        self.tolerance_flat_in = 0.1
-        self.tolerance_out = 0.6
-        self.tolerance_tw_out = 0.4
-        self.angle_tw_boat = 17.1
-        self.angle_tolerance = 1.0
-
         try:
             self.create_from_source(source_file)
             self.ligand = self.atoms[0].residue_name if self.atoms else "Ligand not recognized!"  # TODO: raise error?
@@ -74,7 +65,7 @@ class Cyclohexane(SixAtomRing):
         molecule, after that it checks for the possible conformations to be true.
         """
 
-        self.find_plane(self.tolerance_in)
+        self.find_plane(self.config.ch.t_in)
 
         if self.is_flat():
             self.conformation = Conformation.Flat
@@ -99,10 +90,10 @@ class Cyclohexane(SixAtomRing):
         
         right_plane = Plane(self.index(0), self.index(1), self.index(3))
         left_plane = Plane(self.index(0), self.index(1), self.index(4))
-        return (right_plane.is_on_plane(self.index(2), self.tolerance_flat_in) and
-                right_plane.is_on_plane(self.index(5), self.tolerance_flat_in) and
-                left_plane.is_on_plane(self.index(2), self.tolerance_flat_in) and
-                left_plane.is_on_plane(self.index(5), self.tolerance_flat_in))
+        return (right_plane.is_on_plane(self.index(2), self.config.ch.t_flat_in) and
+                right_plane.is_on_plane(self.index(5), self.config.ch.t_flat_in) and
+                left_plane.is_on_plane(self.index(2), self.config.ch.t_flat_in) and
+                left_plane.is_on_plane(self.index(5), self.config.ch.t_flat_in))
 
     def is_half_chair(self) -> bool:
         """
@@ -115,10 +106,10 @@ class Cyclohexane(SixAtomRing):
         plane = Plane(self.index(0), self.index(1), self.index(3))
         right_dist = abs(plane.distance_from(self.index(2)))
         left_dist = abs(plane.distance_from(self.index(5)))
-        return (plane.is_on_plane(self.index(2), self.tolerance_flat_in) !=
-                plane.is_on_plane(self.index(5), self.tolerance_flat_in)) and \
-            plane.is_on_plane(self.index(4), self.tolerance_flat_in) and \
-            ((right_dist > self.tolerance_out) != (left_dist > self.tolerance_out))
+        return (plane.is_on_plane(self.index(2), self.config.ch.t_flat_in) !=
+                plane.is_on_plane(self.index(5), self.config.ch.t_flat_in)) and \
+            plane.is_on_plane(self.index(4), self.config.ch.t_flat_in) and \
+            ((right_dist > self.config.ch.t_out) != (left_dist > self.config.ch.t_out))
 
     def is_chair(self) -> bool:
         """
@@ -132,8 +123,8 @@ class Cyclohexane(SixAtomRing):
         plane = Plane(self.index(0), self.index(1), self.index(3))
         right_dist = plane.distance_from(self.index(2))
         left_dist = plane.distance_from(self.index(5))
-        return abs(right_dist) > self.tolerance_out and \
-            abs(left_dist) > self.tolerance_out and \
+        return abs(right_dist) > self.config.ch.t_out and \
+            abs(left_dist) > self.config.ch.t_out and \
             (right_dist * left_dist < 0)
 
     def is_boat(self) -> bool:
@@ -147,8 +138,8 @@ class Cyclohexane(SixAtomRing):
         plane = Plane(self.index(0), self.index(1), self.index(3))
         right_dist = plane.distance_from(self.index(2))
         left_dist = plane.distance_from(self.index(5))
-        return abs(right_dist) > self.tolerance_out and \
-            abs(left_dist) > self.tolerance_out and \
+        return abs(right_dist) > self.config.ch.t_out and \
+            abs(left_dist) > self.config.ch.t_out and \
             (right_dist * left_dist > 0)
 
     def is_twisted_boat(self) -> bool:
@@ -161,8 +152,8 @@ class Cyclohexane(SixAtomRing):
         right_dist = right_plane.distance_from(self.index(2))
         left_dist = left_plane.distance_from(self.index(5))
         tw_angle = abs(dihedral_angle(self.index(1), self.index(3), self.index(4), self.index(0)))
-        return ((self.angle_tw_boat - self.angle_tolerance) < tw_angle < (self.angle_tw_boat + self.angle_tolerance)
-                and abs(right_dist) > self.tolerance_tw_out
-                and abs(left_dist) > self.tolerance_tw_out
+        return ((self.config.ch.t_tw_boat_angle - self.config.ch.t_angle) < tw_angle < (self.config.ch.t_tw_boat_angle + self.config.ch.t_angle)
+                and abs(right_dist) > self.config.ch.t_tw_out
+                and abs(left_dist) > self.config.ch.t_tw_out
                 and (right_dist * left_dist) > 0)
 

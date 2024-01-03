@@ -239,3 +239,4 @@ fabric.properties
 
 # Folders used for local testing
 filtered_ligands
+config.txt
