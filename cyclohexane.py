@@ -31,31 +31,29 @@ class Cyclohexane(SixAtomRing):
             self.create_from_source(source_file)
             self.ligand = self.atoms[0].residue_name if self.atoms else "Ligand not recognized!"  # TODO: raise error?
 
-            self.sort_atoms()
+            self.validate_atoms()
             self.analyze()
         except Exception as e:
             print(e)
 
-    def sort_atoms(self) -> None:
+    def validate_atoms(self) -> None:
         """
-        Goes over the list of names of atoms loaded from `atom_names` file and maps
-        existing atoms to the same order of atoms as specified in the said file.
+        Does magic and shoots out sparks
         """
-        new_lst = []
-        for atom_name_list in self.names[self.ligand]:
-            atom_name_set = set(atom_name_list)
-            our_atoms = set([x.name for x in self.atoms])
-            if atom_name_set == our_atoms:
-                for atom_name in atom_name_list:
-                    for atom in self.atoms:
-                        if atom.name == atom_name:
-                            # print(f"To atom name {atom_name} assigning atom {atom}")
-                            new_lst.append(atom)
-                            continue
-        if len(new_lst) != 6:
-            # TODO: throw some exception, handle, idk
-            # print("Not all atoms were found!")
-            pass
+        new_lst = [None for _ in range(6)]
+        for atom in self.atoms:
+            for i in range(6):
+                if atom.name in self.names[self.ligand][i]:
+                    if new_lst[i] is not None:
+                        print(f"{atom.name} atom found twice!")
+                        self.is_valid = False
+                        return
+                    new_lst[i] = atom
+                    break
+        if None in new_lst:
+            print("Not all atoms were found")
+            self.is_valid = False
+            return
         self.atoms = new_lst
 
     def create_from_source(self, source: list[str]) -> None:

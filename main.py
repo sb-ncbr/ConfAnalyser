@@ -16,9 +16,12 @@ def load_names(file_name: str) -> dict[str, list[list[str]]]:
         split_line = line.split()
         ligand = split_line[0]
         if ligand in out:
-            out[ligand].append(split_line[1:])
+            for i, name in enumerate(split_line[1:]):
+                out[ligand][i].append(name)
         else:
-            out[ligand] = [split_line[1:]]
+            out[ligand] = []
+            for name in split_line[1:]:
+                out[ligand].append([name])
     return out
 
 
@@ -40,13 +43,14 @@ def run():
     # files = load_file("./dataset/sing_test_file_path")
     names = load_names("./filtered_ligands/atom_names.txt")
     # print(f"Loaded:")
-    # print_dict(names)
+    print_dict(names)
+
     Molecule.initialize(names)
 
     for file in files:
         filename = file.replace("\n", "").replace("\r", "")
         data = load_file(filename)
-        molecule: Optional[Molecule] = None  # TODO: Remove later when we got certainty matching will work
+        molecule: Optional[Molecule, Cyclohexane] = None  # TODO: Remove later when we got certainty matching will work
 
         match molecule_type:
             case MoleculeType.Cyclohexane:
@@ -58,7 +62,14 @@ def run():
             case MoleculeType.Oxane:
                 ...
 
-        Molecule.molecules.append(molecule)
+        if molecule.is_valid:
+            Molecule.molecules.append(molecule)
+
+        else:
+            ligand = filename.split('/')[-1].split('_')[0]
+            print(f"{filename}: ommited")
+            # print(f"URL: https://www.rcsb.org/ligand/{ligand}")
+            # print(f"URL: https://cdn.rcsb.org/images/ccd/labeled/{ligand[0]}/{ligand}.svg\n")
         # print(f"{filename.split('/')[-1]}: {molecule.conformation.name.upper()}")
 
     # print_dict(Molecule.names)
