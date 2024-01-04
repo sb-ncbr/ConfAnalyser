@@ -15,8 +15,6 @@ class Cyclohexane(SixAtomRing):
 
         # Set the needed parameters
         self.source_file: list[str] = source_file
-        # TODO: add validity check for when creating the molecule
-        self.is_valid = True
 
         try:
             self.create_from_source(source_file)
@@ -26,37 +24,6 @@ class Cyclohexane(SixAtomRing):
             self.analyze()
         except Exception as e:
             print(e)
-
-    def validate_atoms(self) -> None:
-        """
-        Validates whether all the atoms of a molecule have their name
-        present in the names file and then creates the ordering
-        of atoms based on the order from the names file. In case of
-        duplicate names within the same index of atom position, error
-        out and cancel processing of this molecule as a result.
-        """
-        new_lst = [None for _ in range(6)]
-        for atom in self.atoms:
-            for i in range(6):
-                if atom.name in self.names[self.ligand][i]:
-                    if new_lst[i] is not None:
-                        print(f"{atom.name} atom found twice!")
-                        self.is_valid = False
-                        return
-                    new_lst[i] = atom
-                    break
-        if None in new_lst:
-            print("Not all atoms were found")
-            self.is_valid = False
-            return
-        self.atoms = new_lst
-
-    def create_from_source(self, source: list[str]) -> None:
-        """
-        Creates atoms from the source file
-        """
-        for i in range(6):
-            self.atoms.append(Atom(source[i + 1]))
 
     def __str__(self) -> str:
         out = "Molecule of Cyclohexane:\n"
@@ -84,14 +51,16 @@ class Cyclohexane(SixAtomRing):
         else:
             self.conformation = Conformation.Undefined
 
-    def is_flat(self) -> bool:
+    def is_flat(self):
         """
         Decides whether this molecule's conformation is flat.
         Flat conformation of molecule is determined by having all its atoms in one plane.
+
+        Is shared by all atoms
         """
         if not self.has_plane:
             return False
-        
+
         right_plane = Plane(self.index(0), self.index(1), self.index(3))
         left_plane = Plane(self.index(0), self.index(1), self.index(4))
         return (right_plane.is_on_plane(self.index(2), self.config.ch.t_flat_in) and

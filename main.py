@@ -1,5 +1,6 @@
 from typing import *
 from atom import Atom
+from benzene import Benzene
 from cyclohexane import Cyclohexane
 from molecule import Molecule, MoleculeType
 
@@ -58,7 +59,7 @@ def run():
             case MoleculeType.Cyclopentane:
                 ...
             case MoleculeType.Benzene:
-                ...
+                molecule = Benzene(data)
             case MoleculeType.Oxane:
                 ...
 

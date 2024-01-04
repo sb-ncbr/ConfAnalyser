@@ -53,6 +53,9 @@ class Molecule:
         self.conformation = Conformation.Unanalysed
         self.molecule_type = MoleculeType.Undefined
 
+        # TODO: add validity check for when creating the molecule
+        self.is_valid = True
+
     def print_statistics(self) -> None:
         print("SUMMARY\n-------")
         total = len(Molecule.molecules)
@@ -92,3 +95,46 @@ class Molecule:
     def set_conf_oxane(self) -> None:
         self.conformations = [Conformation.Half_Chair, Conformation.Chair, Conformation.Boat,
                               Conformation.Envelope, Conformation.Skew] + self.conformations
+
+    def get_atom_count(self):
+        match self.molecule_type:
+            case MoleculeType.Cyclohexane:
+                return 6
+            case MoleculeType.Benzene:
+                return 6
+            case MoleculeType.Oxane:
+                return 6
+            case MoleculeType.Cyclopentane:
+                return 5
+
+    def create_from_source(self, source: list[str]) -> None:
+        """
+        Creates atoms from the source file
+        """
+        for i in range(self.get_atom_count()):
+            self.atoms.append(Atom(source[i + 1]))
+
+    def validate_atoms(self) -> None:
+        """
+        Validates whether all the atoms of a molecule have their name
+        present in the names file and then creates the ordering
+        of atoms based on the order from the names file. In case of
+        duplicate names within the same index of atom position, error
+        out and cancel processing of this molecule as a result.
+        """
+        atom_count = self.get_atom_count()
+        new_lst = [None for _ in range(atom_count)]
+        for atom in self.atoms:
+            for i in range(atom_count):
+                if atom.name in self.names[self.ligand][i]:
+                    if new_lst[i] is not None:
+                        print(f"{atom.name} atom found twice!")
+                        self.is_valid = False
+                        return
+                    new_lst[i] = atom
+                    break
+        if None in new_lst:
+            print("Not all atoms were found")
+            self.is_valid = False
+            return
+        self.atoms = new_lst

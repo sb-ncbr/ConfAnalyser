@@ -11,6 +11,14 @@ class Ring(Molecule):
         self.has_plane = False
         self.begin = 0
 
+    def index(self, i: int) -> Atom:
+        # TODO: Think of a better name? index kinda sus
+        """
+        Returns ring's atom at a given index while including the `begin` index determined
+        by the find_plane function.
+        """
+        return self.atoms[(self.begin + i) % 6]
+
 
 class SixAtomRing(Ring):
     def __init__(self):
@@ -39,11 +47,3 @@ class SixAtomRing(Ring):
 
                 if plane.is_on_plane(self.atoms[(i + dist3) % 6], tolerance):
                     self.has_plane = True
-
-    def index(self, i: int) -> Atom:
-        # TODO: Think of a better name? index kinda sus
-        """
-        Returns ring's atom at a given index while including the `begin` index determined
-        by the find_plane function.
-        """
-        return self.atoms[(self.begin + i) % 6]
