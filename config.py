@@ -48,10 +48,10 @@ class Config:
         self.oxane = OxaneRecord()
 
         # Aliases to use instead of full names, when one feel brave
-        self.cp = self.cyclopentane
-        self.ch = self.cyclohexane
-        self.b = self.benzene
-        self.o = self.oxane
+        self.cp: CyclopentaneRecord = self.cyclopentane
+        self.ch: CyclohexaneRecord = self.cyclohexane
+        self.b: BenzeneRecord = self.benzene
+        self.o: OxaneRecord = self.oxane
 
         self.load_config()
 

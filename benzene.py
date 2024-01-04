@@ -29,7 +29,7 @@ class Benzene(SixAtomRing):
         molecule, after that it checks for the possible conformations to be true.
         """
 
-        self.find_plane(self.config.b.t_in)
+        self.find_plane(self.config.b.t_flat_in)
 
         if self.is_flat():
             self.conformation = Conformation.Flat
