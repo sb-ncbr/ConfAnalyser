@@ -24,7 +24,7 @@ class SixAtomRing(Ring):
     def __init__(self):
         super().__init__()
 
-    def find_plane(self, tolerance: float, dist1: int = 1, dist2: int = 3, dist3: int = 4) -> None:
+    def find_plane(self, tolerance: float, dist1: int = 1, dist2: int = 3, dist3: int = 4) -> bool:
         """
         Find the best suitable plane to start working with and set the `begin` parameter
         of the molecule to be used in other conformation validators.
@@ -32,6 +32,7 @@ class SixAtomRing(Ring):
         """
         # print(f"[find_plane@SixAtomRing] CALLED")
         distance = float("inf")
+        self.has_plane = False
 
         for i in range(6):
             # print(f"\n[find_plane@SixAtomRing] ITERATION {i}")
@@ -42,11 +43,14 @@ class SixAtomRing(Ring):
             # print(f"[find_plane@SixAtomRing] Distance {i}: {dist_from_plane}")
             # print(f"[find_plane@SixAtomRing] Plane: < {plane.a}, {plane.b}, {plane.c}, {plane.d} >")
             if dist_from_plane < distance:
+                # print(f"[find_plane@SixAtomRing] Smaller distance found, setting min dist to {dist_from_plane}")
                 self.begin = i
                 distance = dist_from_plane
 
                 if plane.is_on_plane(self.atoms[(i + dist3) % 6], tolerance):
                     self.has_plane = True
+        # print(f"[find_plane@SixAtomRing] - returning {self.has_plane}")
+        return self.has_plane
 
 
 class FiveAtomRing(Ring):

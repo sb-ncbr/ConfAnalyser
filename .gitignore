@@ -239,4 +239,12 @@ fabric.properties
 
 # Folders used for local testing
 filtered_ligands
+cyclohexanes
+cyclopentanes
+oxanes
+oxanes_full
+benzenes
 config.txt
+
+out*
+*.zip

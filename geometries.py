@@ -141,8 +141,9 @@ class Plane:
         Decides whether a given point is located on this plane.
         Threshold determined by passed `tolerance` parameter
         """
-        # print(f"[PLANE] - checking if {self} is on plane")
-        return abs(self.distance_from(point)) <= tolerance
+        result = abs(self.distance_from(point)) <= tolerance
+        # print(f"[PLANE] - checking if {self} is on plane - answer is {result}")
+        return result
 
     def __str__(self):
         return f"Plane of a, b, c, d = {self.a, self.b, self.c, self.d}"

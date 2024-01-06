@@ -2,6 +2,7 @@ from __future__ import annotations
 from atom import Atom
 from enum import Enum
 from config import Config
+from typing import Optional
 
 
 class MoleculeType(Enum):
@@ -31,7 +32,7 @@ class Molecule:
     # Config from which to load tolerances later
     config: Config = None
     # A list of all saved molecules
-    molecules: list[Molecule] = []
+    molecules: list[Optional[Molecule]] = []
 
     @staticmethod
     def initialize(names: dict[str, list[list[str]]]):
@@ -58,6 +59,8 @@ class Molecule:
 
     def print_statistics(self) -> None:
         print("SUMMARY\n-------")
+        # Remove possible None-s from list from cases where file was ommited
+        Molecule.molecules = [x for x in Molecule.molecules if x is not None]
         total = len(Molecule.molecules)
         for conf in self.conformations:
             count = sum([1 if x.conformation == conf else 0 for x in Molecule.molecules])
@@ -87,14 +90,14 @@ class Molecule:
                               Conformation.Twisted_Boat] + self.conformations
 
     def set_conf_cyclopentane(self) -> None:
-        self.conformations = [Conformation.Twist, Conformation.Envelope] + self.conformations
+        self.conformations = [Conformation.Envelope, Conformation.Flat, Conformation.Twist] + self.conformations
 
     def set_conf_benzene(self) -> None:
         self.conformations = [Conformation.Twisted_Boat] + self.conformations
 
     def set_conf_oxane(self) -> None:
-        self.conformations = [Conformation.Half_Chair, Conformation.Chair, Conformation.Boat,
-                              Conformation.Envelope, Conformation.Skew] + self.conformations
+        self.conformations = [Conformation.Boat, Conformation.Chair, Conformation.Envelope,
+                              Conformation.Flat, Conformation.Half_Chair, Conformation.Skew] + self.conformations
 
     def get_atom_count(self):
         match self.molecule_type:

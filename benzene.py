@@ -19,7 +19,8 @@ class Benzene(SixAtomRing):
             self.ligand = self.atoms[0].residue_name if self.atoms else "Ligand not recognized!"  # TODO: raise error?
 
             self.validate_atoms()
-            self.analyze()
+            if self.is_valid:
+                self.analyze()
         except Exception as e:
             print(e)
 
