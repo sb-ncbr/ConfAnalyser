@@ -10,15 +10,21 @@ from config import Config
 
 from multiprocessing import Pool
 from argparse import ArgumentParser
+import os
 
 
-# default option for parallel processing
+# default option for parallel processing, currently in run() as well
 parallel = True
 
 
 def load_file(file_name: str) -> list[str]:
-    with open(file_name) as file:
-        return file.readlines()
+    try:
+        with open(file_name) as file:
+            return file.readlines()
+    except OSError:
+        print(f"[ERROR] File `{file_name}` could not be opened!\nCheck the path and try again.")
+        exit()
+
 
 
 def load_names(file_name: str) -> dict[str, list[list[str]]]:
@@ -57,8 +63,6 @@ def work_file(resources) -> Optional[Molecule]:
         Molecule.config = resources[2]
     filename = file.replace("\n", "").replace("\r", "")
     data = load_file(filename)
-    # TODO: Meh
-    molecule: Optional[Molecule, Cyclohexane, Cyclopentane, Oxane, Benzene] = None
 
     match molecule_type:
         case MoleculeType.Oxane:
@@ -69,6 +73,8 @@ def work_file(resources) -> Optional[Molecule]:
             molecule = Cyclopentane(data)
         case MoleculeType.Benzene:
             molecule = Benzene(data)
+        case _:
+            molecule = None
     molecule.set_file_name(file)
 
     if molecule.is_valid:
@@ -82,28 +88,20 @@ def work_file(resources) -> Optional[Molecule]:
         # print(f"URL: https://cdn.rcsb.org/images/ccd/labeled/{ligand[0]}/{ligand}.svg\n")
 
 
-def run():
+def run(paths_file: str, names_file: str, molecule_type: MoleculeType,
+        print_list: bool, print_summary: bool, print_all: bool):
+    # paths_file, names_file, molecule_type, print_list, print_summary, print_all
     global parallel
     parallel = True
-    molecule_type = MoleculeType.Oxane
-    mol_type = ""
-    print_summary = True
-    print_list = False
-    match molecule_type:
-        case MoleculeType.Cyclohexane:
-            mol_type = "cyclohexanes"
-        case MoleculeType.Cyclopentane:
-            mol_type = "cyclopentanes"
-        case MoleculeType.Oxane:
-            mol_type = "oxanes"
-        case MoleculeType.Benzene:
-            mol_type = "benzenes"
 
-    files = load_file(f"./{mol_type}/paths_to_pdbs.txt")
+    # mol_type = "oxanes"
+    # files = load_file(f"./{mol_type}/paths_to_pdbs.txt")
+    files = load_file(paths_file)
     # files = load_file(f"./{mol_type}/ommited.txt")
     # files = ["C:/oxanes/6UZ/patterns/6UZ_5klu_0.pdb"]
     # files = load_file("./dataset/sing_test_file_path")
-    names = load_names(f"./{mol_type}/atom_names.txt")
+    # names = load_names(f"./{mol_type}/atom_names.txt")
+    names = load_names(names_file)
     cfg = Config()
     # print(f"Loaded:")
     # print_dict(names)
@@ -124,10 +122,10 @@ def run():
     #     out = ", ".join(x for x in lst)
     #     print(f"   -> {out}")
     Molecule.molecules = [x for x in Molecule.molecules if x is not None]
-    if print_list:
+    if print_list or print_all:
         for m in Molecule.molecules:
             print(m)
-    if print_summary:
+    if print_summary or print_all:
         if len(Molecule.molecules) == 0:
             print("No molecules detected!")
         else:
@@ -135,12 +133,15 @@ def run():
 
 
 def main():
-    parser = ArgumentParser(prog="ConfAnalyser",
-                            description="TODO")
+    # TODO: Check possible other options? os.name is "posix" for unix/posix systems, "nt" for windows
+    parser = ArgumentParser(prog="python main.py")
+    if os.name == "posix":
+        parser = ArgumentParser(prog="python3 main.py")
+
     required = parser.add_argument_group('Required')
     required.add_argument('-i', '--input_list', required=True, type=str,
                           help=f'Read list of molecules to process from FILE - '
-                               f'each line is treated as path to single PDB file')
+                               f'each line is treated as path to a single PDB file')
     required.add_argument("-n", "--name_list", required=True, type=str, action="store",
                           help="Read list of names of an atom ring FILE. Each line represents one ligand where"
                                "first word on each line is the ligand's name and all the following words on the line"
@@ -149,7 +150,13 @@ def main():
                                "name variatons, more lines with the same ligand name need to be present. Order of"
                                "atoms decides the order of atoms within the ring.")
 
-    optional = parser.add_argument_group('Optional')
+    group = required.add_mutually_exclusive_group(required=True)
+    group.add_argument("--cyclohexane", action="store_true", help="Set molecule type to cyclohexane.")
+    group.add_argument("--cyclopentane", action="store_true", help="Set molecule type to cyclopentane.")
+    group.add_argument("--oxane", action="store_true", help="Set molecule type to oxane.")
+    group.add_argument("--benzene", action="store_true", help="Set molecule type to benzene.")
+
+    optional = parser.add_argument_group('Optional').add_mutually_exclusive_group()
     optional.add_argument("-l", "--list", required=False, action='store_true',
                           help="Display results only as a list of molecules and their conformations.")
     optional.add_argument("-s", "--summary", required=False, action="store_true",
@@ -158,6 +165,26 @@ def main():
     optional.add_argument("-a", "--all", required=False, action="store_true",
                           help="Display both list and summary. Default option when neither -s or -l is used.")
     args = parser.parse_args()
+
+    paths_file = args.input_list
+    names_file = args.name_list
+
+    if args.cyclohexane:
+        molecule_type = MoleculeType.Cyclohexane
+    elif args.cyclopentane:
+        molecule_type = MoleculeType.Cyclopentane
+    elif args.oxane:
+        molecule_type = MoleculeType.Oxane
+    elif args.benzene:
+        molecule_type = MoleculeType.Benzene
+    else:
+        molecule_type = MoleculeType.Undefined
+
+    print_list = args.list
+    print_summary = args.summary
+    print_all = args.all or (not print_list and not print_summary)
+
+    run(paths_file, names_file, molecule_type, print_list, print_summary, print_all)
 
 
 if __name__ == "__main__":

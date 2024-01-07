@@ -1,11 +1,11 @@
-from molecule import Molecule
+from molecule import Molecule, MoleculeType
 from geometries import Plane
 from atom import Atom
 
 
 class Ring(Molecule):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, molecule_type: MoleculeType):
+        super().__init__(molecule_type)
         # TODO: Rework conformation into own enum? A class perhaps?
         self.conformation = "UNDEFINED"
         self.has_plane = False
@@ -21,8 +21,8 @@ class Ring(Molecule):
 
 
 class SixAtomRing(Ring):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, molecule_type: MoleculeType):
+        super().__init__(molecule_type)
 
     def find_plane(self, tolerance: float, dist1: int = 1, dist2: int = 3, dist3: int = 4) -> bool:
         """
@@ -54,8 +54,8 @@ class SixAtomRing(Ring):
 
 
 class FiveAtomRing(Ring):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, molecule_type: MoleculeType):
+        super().__init__(molecule_type)
 
     def find_plane(self, tolerance: float, dist1: int = 1, dist2: int = 2, dist3: int = 3) -> None:
         """

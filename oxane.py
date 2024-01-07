@@ -21,26 +21,21 @@ class Oxane(SixAtomRing):
     def __init__(self, source_line: list[str]):
         # print("Oxane init")
         # Initialize the parent structure
-        super().__init__()
-        self.molecule_type = MoleculeType.Oxane
-        self.set_conformations()
-        self.conformation = Conformation.Undefined
+        super().__init__(MoleculeType.Oxane)
 
         # Set the needed parameters
         self.source_line: list[str] = source_line
         self.oxygen_position: int = -1
+        # Currently useless??
         self.out_of_plane_atoms: list[OutOfPlaneAtom] = [OutOfPlaneAtom(), OutOfPlaneAtom()]
 
         try:
             self.create_from_source(source_line)
-            self.ligand = self.atoms[0].residue_name if self.atoms else "Ligand not recognized!"  # TODO: raise error?
-
             self.validate_atoms()
             if self.is_valid:
                 self.analyze()
-        except Exception as _:
-            print(f"{traceback.format_exc()}")
-            pass
+        except Exception as e:  # should not happen but just in case, so we don't kill program
+            print(e)
 
     def validate_atoms(self) -> None:
         """

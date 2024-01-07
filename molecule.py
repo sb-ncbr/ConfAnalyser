@@ -4,6 +4,8 @@ from enum import Enum
 from config import Config
 from typing import Optional
 
+from exceptions import InvalidSourceDataException
+
 
 class MoleculeType(Enum):
     Undefined = 0
@@ -46,15 +48,18 @@ class Molecule:
         if Molecule.config is None:
             Molecule.config = Config()
 
-    def __init__(self):
+    def __init__(self, molecule_type: MoleculeType):
         # A list of all atoms within a given molecule
         self.atoms: list[Atom] = []
         # A list of possible conformation states the molecule can be in
         self.conformations: list[Conformation] = [Conformation.Unanalysed, Conformation.Undefined]
-        self.conformation = Conformation.Unanalysed
-        self.molecule_type = MoleculeType.Undefined
-        self.is_valid = True
-        self.file_name = None
+        self.conformation: Conformation = Conformation.Unanalysed
+        self.molecule_type: MoleculeType = molecule_type
+        self.is_valid: bool = True
+        self.file_name: Optional[str] = None
+        self.ligand: Optional[str] = None
+
+        self.set_conformations()
 
     def print_statistics(self) -> None:
         print("SUMMARY\n-------")
@@ -77,7 +82,6 @@ class Molecule:
         field to its value
         """
         self.file_name = path.split("/")[-1].strip()
-
 
     def set_conformations(self) -> None:
         """
@@ -122,10 +126,17 @@ class Molecule:
 
     def create_from_source(self, source: list[str]) -> None:
         """
-        Creates atoms from the source file
+        Creates atoms from the source file and detect ligand name.
         """
         for i in range(self.get_atom_count()):
-            self.atoms.append(Atom(source[i + 1]))
+            try:
+                self.atoms.append(Atom(source[i + 1]))
+            except InvalidSourceDataException:
+                self.is_valid = False
+
+        # detect and set residue name of the ligand if it exists
+        self.is_valid = self.is_valid and self.atoms[0].residue_name is not None
+        self.ligand = self.atoms[0].residue_name
 
     def validate_atoms(self) -> None:
         """
