@@ -18,7 +18,7 @@ class OutOfPlaneAtom:
 
 
 class Oxane(SixAtomRing):
-    def __init__(self, source_file: list[str], path):
+    def __init__(self, source_line: list[str]):
         # print("Oxane init")
         # Initialize the parent structure
         super().__init__()
@@ -27,13 +27,12 @@ class Oxane(SixAtomRing):
         self.conformation = Conformation.Undefined
 
         # Set the needed parameters
-        self.source_file: list[str] = source_file
-        self.path = path
+        self.source_line: list[str] = source_line
         self.oxygen_position: int = -1
         self.out_of_plane_atoms: list[OutOfPlaneAtom] = [OutOfPlaneAtom(), OutOfPlaneAtom()]
 
         try:
-            self.create_from_source(source_file)
+            self.create_from_source(source_line)
             self.ligand = self.atoms[0].residue_name if self.atoms else "Ligand not recognized!"  # TODO: raise error?
 
             self.validate_atoms()

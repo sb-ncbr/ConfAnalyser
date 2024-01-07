@@ -53,9 +53,8 @@ class Molecule:
         self.conformations: list[Conformation] = [Conformation.Unanalysed, Conformation.Undefined]
         self.conformation = Conformation.Unanalysed
         self.molecule_type = MoleculeType.Undefined
-
-        # TODO: add validity check for when creating the molecule
         self.is_valid = True
+        self.file_name = None
 
     def print_statistics(self) -> None:
         print("SUMMARY\n-------")
@@ -68,6 +67,17 @@ class Molecule:
             percentage = int(percentage) if percentage % 1 == 0 else percentage
             print(f"{(conf.name.upper() + ':'):14}{count} ({percentage}%)")
         print(f"{'TOTAL:':14}{total}")
+
+    def __str__(self):
+        return f"{self.file_name}: {self.conformation.name.upper()}"
+
+    def set_file_name(self, path: str) -> None:
+        """
+        Takes the path to the file and extracts the file name, setting appropriate
+        field to its value
+        """
+        self.file_name = path.split("/")[-1].strip()
+
 
     def set_conformations(self) -> None:
         """
@@ -93,7 +103,7 @@ class Molecule:
         self.conformations = [Conformation.Envelope, Conformation.Flat, Conformation.Twist] + self.conformations
 
     def set_conf_benzene(self) -> None:
-        self.conformations = [Conformation.Twisted_Boat] + self.conformations
+        self.conformations = [Conformation.Flat] + self.conformations
 
     def set_conf_oxane(self) -> None:
         self.conformations = [Conformation.Boat, Conformation.Chair, Conformation.Envelope,

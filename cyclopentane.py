@@ -5,7 +5,7 @@ from angle import dihedral_angle
 
 
 class Cyclopentane(FiveAtomRing):
-    def __init__(self, source_file: list[str]):
+    def __init__(self, source_line: list[str]):
         # Initialize the parent structure
         super().__init__()
         self.molecule_type = MoleculeType.Cyclopentane
@@ -13,10 +13,10 @@ class Cyclopentane(FiveAtomRing):
         self.conformation = Conformation.Undefined
 
         # Set the needed parameters
-        self.source_file: list[str] = source_file
+        self.source_file: list[str] = source_line
 
         try:
-            self.create_from_source(source_file)
+            self.create_from_source(source_line)
             self.ligand = self.atoms[0].residue_name if self.atoms else "Ligand not recognized!"  # TODO: raise error?
 
             self.validate_atoms()
