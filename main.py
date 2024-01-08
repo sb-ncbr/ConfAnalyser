@@ -1,10 +1,9 @@
 from typing import *
-from atom import Atom
 from benzene import Benzene
 from cyclohexane import Cyclohexane
 from cyclopentane import Cyclopentane
 from oxane import Oxane
-from molecule import Molecule, MoleculeType, Conformation
+from molecule import Molecule, MoleculeType
 import time
 from config import Config
 
@@ -24,7 +23,6 @@ def load_file(file_name: str) -> list[str]:
     except OSError:
         print(f"[ERROR] File `{file_name}` could not be opened!\nCheck the path and try again.")
         exit()
-
 
 
 def load_names(file_name: str) -> dict[str, list[list[str]]]:
