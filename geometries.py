@@ -125,9 +125,48 @@ class Plane:
 
     def distance_from(self, point: Point) -> float:
         """
-        Calculates a distance of a given point from this plane
+        Calculates a distance of a given point from this plane.
+
+        NOTE:
+        The usual equation for distance between point and a plane actually uses
+        absolute value inside of it to remove negative values as those make no
+        sense within what we consider to be a distance. This function
+        calculates a "partial" distance, as in it does not use absolute value
+        and the result thus can be negative.
+
+        In this case we can determine on which side of the plane the point is
+        located as all the points on one side of plane will have same sign and
+        all the points on the other side of the plane will have opposite sign.
+
+        It could be argued this function should be called `partial_distance_from`.
         """
+        # TODO: Remove this functions, replace its occurences with true/signed distance, rename true to this name
         # print(f"[PLANE] Calculating distance of {self} and {point}")wa
+        size = sqrt(self.a ** 2 + self.b ** 2 + self.c ** 2)
+        if size == 0:  # shouldn't happen if data is correct
+            return 0
+        return ((self.a * point.x + self.b * point.y + self.c * point.z + self.d) / size)
+
+    def true_distance_from(self, point: Point) -> float:
+        """
+        Calculates a distance of a given point from this plane.
+        """
+        return abs(self.signed_distance_from(point))
+
+    def signed_distance_from(self, point: Point) -> float:
+        """
+        Calculates a distance of a given point from this plane.
+
+        The usual equation for distance between point and a plane actually uses
+        absolute value inside of it to remove negative values as those make no
+        sense within what we consider to be a distance. This function
+        calculates a "partial" distance, as in it does not use absolute value
+        and the result thus can be negative.
+
+        In this case we can determine on which side of the plane the point is
+        located as all the points on one side of plane will have same sign and
+        all the points on the other side of the plane will have opposite sign.
+        """
         size = sqrt(self.a ** 2 + self.b ** 2 + self.c ** 2)
         if size == 0:  # shouldn't happen if data is correct
             return 0
@@ -139,9 +178,30 @@ class Plane:
         Decides whether a given point is located on this plane.
         Threshold determined by passed `tolerance` parameter
         """
-        result = abs(self.distance_from(point)) <= tolerance
+        result = self.true_distance_from(point) <= tolerance
         # print(f"[PLANE] - checking if {self} is on plane - answer is {result}")
         return result
+
+    def are_opposite_side(self, point1: Point, point2: Point) -> bool:
+        """
+        Decides whether two provided points are on opposite sides of this plane.
+
+        Calculate signed distances of both points from this plane, multiply
+        then those distance. Since they were signed, if the result is
+        negative, that means one of the distances was negative and
+        other was positive which then means that the points are located on the
+        opposite sides of this plane.
+        """
+        distance_1 = self.signed_distance_from(point1)
+        distance_2 = self.signed_distance_from(point2)
+        return distance_1 * distance_2 < 0
+
+    def are_same_side(self, point1: Point, point2: Point) -> bool:
+        """
+        Decides whether two provided points are on the same side of this plane.
+        """
+        return not self.are_opposite_side(point1, point2)
+
 
     def __str__(self):
         return f"Plane of a, b, c, d = {self.a, self.b, self.c, self.d}"
