@@ -145,6 +145,26 @@ class Molecule:
         of atoms based on the order from the names file. In case of
         duplicate names within the same index of atom position, error
         out and cancel processing of this molecule as a result.
+
+        ValidateAtoms(Molecule):
+        atomsList = empty list of size of Molecule's atom count
+        FOR EACH atom of Molecule's atoms DO
+            FOR i = 1 to amount of Molecule's atoms DO
+                IF atom's name is in list of names for given ligand at index i THEN
+                    IF atomsList at index i is not empty THEN
+                        Molecule is invalid
+                        RETURN
+                    FI
+                    atomsList[i] = atom
+                    BREAK
+                FI
+            END FOR
+        END FOR
+        IF any empty place in atomsList
+            Molecule is invalid
+            RETURN
+        FI
+        Molecule's atoms list = atomsList
         """
         atom_count = self.get_atom_count()
         new_lst = [None for _ in range(atom_count)]
