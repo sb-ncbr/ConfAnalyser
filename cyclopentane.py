@@ -56,6 +56,10 @@ class Cyclopentane(FiveAtomRing):
         """
         Decides whether this molecule's conformation is envelope.
         Envelope conformation of molecule is determined by having all but one atom on a same plane.
+        TODO: if base plane is atoms 0, 1, 2 and we check 4 for being out of
+        TODO: plane, what if atom 3 is also out of plane? Improbable but what if
+        Checked that with adding condition for if atom 3 is on plane and results
+        did not change at all, probably extremely improbable
         """
         return self.basePlane.true_distance_from(self[4]) > self.config.cp.t_out
 

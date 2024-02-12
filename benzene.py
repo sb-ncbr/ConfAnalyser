@@ -38,6 +38,20 @@ class Benzene(SixAtomRing):
         Flat conformation of molecule is determined by having all its atoms in one plane.
 
         Is shared by all atoms
+
+        IsFlat(Molecule, ToleranceFlatIn):
+            Atom 1, ..., Atom 6 = Molecule's atoms
+            rightPlane = Plane between Atom 1, Atom 2 and Atom 4
+            leftPlane = Plane between Atom 1, Atom 2 and Atom 5
+            IF distance between rightPlane and Atom 3 < ToleranceFlatIn AND
+               distance between rightPlane and Atom 6 < ToleranceFlatIn AND
+               distance between leftPlane and Atom 3 < ToleranceFlatIn AND
+               distance between lestPlane and Atom 6 < ToleranceFlatIn
+            THEN
+                RETURN TRUE
+            ELSE
+                RETURN FALSE
+            FI
         """
         right_plane = Plane(self[0], self[1], self[3])
         left_plane = Plane(self[0], self[1], self[4])
