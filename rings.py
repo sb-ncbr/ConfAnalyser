@@ -19,6 +19,11 @@ class Ring(Molecule):
         """
         return self.atoms[(self.begin + i) % self.get_atom_count()]
 
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            return self.atoms[(self.begin + item) % self.get_atom_count()]
+        return None
+
 
 class SixAtomRing(Ring):
     def __init__(self, molecule_type: MoleculeType):
