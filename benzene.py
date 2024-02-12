@@ -27,7 +27,7 @@ class Benzene(SixAtomRing):
 
         self.find_plane(self.config.b.t_flat_in)
 
-        if self.is_flat():
+        if self.has_plane and self.is_flat():
             self.conformation = Conformation.Flat
         else:
             self.conformation = Conformation.Undefined
@@ -39,12 +39,9 @@ class Benzene(SixAtomRing):
 
         Is shared by all atoms
         """
-        if not self.has_plane:
-            return False
-
-        right_plane = Plane(self.index(0), self.index(1), self.index(3))
-        left_plane = Plane(self.index(0), self.index(1), self.index(4))
-        return (right_plane.is_on_plane(self.index(2), self.config.b.t_flat_in) and
-                right_plane.is_on_plane(self.index(5), self.config.b.t_flat_in) and
-                left_plane.is_on_plane(self.index(2), self.config.b.t_flat_in) and
-                left_plane.is_on_plane(self.index(5), self.config.b.t_flat_in))
+        right_plane = Plane(self[0], self[1], self[3])
+        left_plane = Plane(self[0], self[1], self[4])
+        return (right_plane.is_on_plane(self[2], self.config.b.t_flat_in) and
+                right_plane.is_on_plane(self[5], self.config.b.t_flat_in) and
+                left_plane.is_on_plane(self[2], self.config.b.t_flat_in) and
+                left_plane.is_on_plane(self[5], self.config.b.t_flat_in))
