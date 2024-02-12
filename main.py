@@ -1,15 +1,15 @@
 from typing import *
+import time
+from multiprocessing import Pool
+from argparse import ArgumentParser
+import os
+
 from benzene import Benzene
 from cyclohexane import Cyclohexane
 from cyclopentane import Cyclopentane
 from oxane import Oxane
 from molecule import Molecule, MoleculeType
-import time
 from config import Config
-
-from multiprocessing import Pool
-from argparse import ArgumentParser
-import os
 
 
 # default option for parallel processing, currently in run() as well
@@ -54,6 +54,9 @@ def print_dict(dct):
 
 
 def work_file(resources) -> Optional[Molecule]:
+    """
+    Process a single file and analyze it.
+    """
     file = resources[0]
     molecule_type = resources[3]
     if parallel:
@@ -130,7 +133,7 @@ def run(paths_file: str, names_file: str, molecule_type: MoleculeType,
             Molecule.molecules[0].print_statistics()
 
 
-def main():
+def argument_parser():
     # TODO: Check possible other options? os.name is "posix" for unix/posix systems, "nt" for windows
     parser = ArgumentParser(prog="python main.py")
     if os.name == "posix":
@@ -162,7 +165,10 @@ def main():
                                "of conformations among tested molecules.")
     optional.add_argument("-a", "--all", required=False, action="store_true",
                           help="Display both list and summary. Default option when neither -s or -l is used.")
-    args = parser.parse_args()
+    return parser.parse_args()
+
+def main():
+    args = argument_parser()
 
     paths_file = args.input_list
     names_file = args.name_list
