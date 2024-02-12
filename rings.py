@@ -34,6 +34,26 @@ class SixAtomRing(Ring):
         Find the best suitable plane to start working with and set the `begin` parameter
         of the molecule to be used in other conformation validators.
         Also decide whether the molecule even has any valid plane at all.
+        FindIdealPlane(ToleranceIn, Distance1 = 1, Distance 2 = 3, Distance 3 = 4):
+            distance = infinity
+            Molecule has plane = FALSE
+            FOR i = 1 to i == 6
+                Atom1 = Molecule's Atom i modulo 6
+                Atom2 = Molecule's Atom (i + Distance1) modulo 6
+                Atom3 = Molecule's Atom (i + Distance2) modulo 6
+                Atom4 = Molecule's Atom (i + Distance3) modulo 6
+                plane = Plane between Atom1, Atom2 and Atom3
+                distanceFromPlane = distance between plane and Atom3
+                IF distanceFromPlane < distance
+                THEN
+                    Molecule's begin = 1
+                    distance = distanceFromPlane
+                    IF distance between plane and Atom4 < ToleranceIn THEN
+                        Molecule has plane = TRUE
+                    FI
+                FI
+            END FOR
+            RETURN Molecule has plane
         """
         # print(f"[find_plane@SixAtomRing] CALLED")
         distance = float("inf")
