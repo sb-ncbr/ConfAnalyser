@@ -11,14 +11,6 @@ class Ring(Molecule):
         self.has_plane = False
         self.begin = 0
 
-    def index(self, i: int) -> Atom:
-        # TODO: Think of a better name? index kinda sus
-        """
-        Returns ring's atom at a given index while including the `begin` index determined
-        by the find_plane function.
-        """
-        return self.atoms[(self.begin + i) % self.get_atom_count()]
-
     def __getitem__(self, item):
         if isinstance(item, int):
             return self.atoms[(self.begin + item) % self.get_atom_count()]
