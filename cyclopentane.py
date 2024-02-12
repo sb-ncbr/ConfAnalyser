@@ -28,49 +28,47 @@ class Cyclopentane(FiveAtomRing):
 
         self.find_plane(self.config.cp.t_in)
 
-        if self.is_flat():
-            self.conformation = Conformation.Flat
-        elif self.is_envelope():
-            self.conformation = Conformation.Envelope
-        elif self.is_twist():
-            self.conformation = Conformation.Twist
+        self.basePlane = Plane(self[0], self[1], self[2])
+
+        if self.has_plane:
+            if self.is_flat():
+                self.conformation = Conformation.Flat
+            elif self.is_envelope():
+                self.conformation = Conformation.Envelope
+            else:
+                self.conformation = Conformation.Undefined
         else:
-            self.conformation = Conformation.Undefined
+            if self.is_twist():
+                self.conformation = Conformation.Twist
+            else:
+                self.conformation = Conformation.Undefined
+
 
     def is_flat(self) -> bool:
         """
         Decides whether this molecule's conformation is flat.
         Flat conformation of molecule is determined by having all its atoms in one plane.
         """
-        if not self.has_plane:
-            return False
-
-        plane = Plane(self.index(0), self.index(1), self.index(2))
-        return (plane.is_on_plane(self.index(3), self.config.cp.t_in)
-                and plane.is_on_plane(self.index(4), self.config.cp.t_in))
+        return (self.basePlane.is_on_plane(self[3], self.config.cp.t_in) and
+                self.basePlane.is_on_plane(self[4], self.config.cp.t_in))
 
     def is_envelope(self) -> bool:
         """
         Decides whether this molecule's conformation is envelope.
         Envelope conformation of molecule is determined by having all but one atom on a same plane.
         """
-        if not self.has_plane:
-            return False
-
-        plane = Plane(self.index(0), self.index(1), self.index(2))
-        return abs(plane.distance_from(self.index(4))) > self.config.cp.t_out
+        return self.basePlane.true_distance_from(self[4]) > self.config.cp.t_out
 
     def is_twist(self):
         """
         Decides whether this molecule's conformation is envelope.
         Twist conformation of molecule is determined by having no plane within the ring.
         """
-
-        left_plane = Plane(self.index(0), self.index(1), self.index(3))
-        right_plane = Plane(self.index(0), self.index(2), self.index(3))
-        left_distance = left_plane.distance_from(self.index(4))
-        right_distance = right_plane.distance_from(self.index(4))
-        twist_angle = dihedral_angle(self.index(0), self.index(1), self.index(2), self.index(3))
+        left_plane = Plane(self[0], self[1], self[3])
+        right_plane = Plane(self[0], self[2], self[3])
+        left_distance = left_plane.signed_distance_from(self[4])
+        right_distance = right_plane.signed_distance_from(self[4])
+        twist_angle = dihedral_angle(self[0], self[1], self[2], self[3])
 
         return ((abs(abs(twist_angle) - self.config.cp.t_tw_boat_angle) < self.config.cp.t_angle)
                 and (abs(right_distance) > self.config.cp.t_tw_out)
