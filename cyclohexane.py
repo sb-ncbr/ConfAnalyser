@@ -117,8 +117,8 @@ class Cyclohexane(SixAtomRing):
             onlyOneAtomIsOutOfMainPlane = atom3Distance < FlatTolerance XOR
                                           atom6Distance < FlatTolerance
 
-            onlyOneAtomIsFarFromPlane = absolute value of atom3Distance > XTolerance XOR
-                                        absolute value of atom5Distance > XTolerance
+            onlyOneAtomIsFarFromPlane = atom3Distance > XTolerance XOR
+                                        atom5Distance > XTolerance
 
             IF onlyOneAtomIsOutOfMainPlane AND
                onlyOneAtomIsFarFromPlane AND
