@@ -19,7 +19,6 @@ class OutOfPlaneAtom:
 
 class Oxane(SixAtomRing):
     def __init__(self, source_line: list[str]):
-        # print("Oxane init")
         # Initialize the parent structure
         super().__init__(MoleculeType.Oxane)
 
@@ -92,27 +91,27 @@ class Oxane(SixAtomRing):
         if not self.find_plane(self.config.o.t_in):
             return False
 
-        left_plane = Plane(self.index(0), self.index(1), self.index(4))
-        right_plane = Plane(self.index(0), self.index(1), self.index(3))
+        left_plane = Plane(self[0], self[1], self[4])
+        right_plane = Plane(self[0], self[1], self[3])
 
-        return (left_plane.is_on_plane(self.index(2), self.config.o.t_in) and
-                left_plane.is_on_plane(self.index(5), self.config.o.t_in) and
-                right_plane.is_on_plane(self.index(2), self.config.o.t_in) and
-                right_plane.is_on_plane(self.index(5), self.config.o.t_in))
+        return (left_plane.is_on_plane(self[2], self.config.o.t_in) and
+                left_plane.is_on_plane(self[5], self.config.o.t_in) and
+                right_plane.is_on_plane(self[2], self.config.o.t_in) and
+                right_plane.is_on_plane(self[5], self.config.o.t_in))
 
     def is_chair(self) -> bool:
         if not self.find_plane(self.config.o.t_in):
             return False
 
-        left_plane = Plane(self.index(0), self.index(1), self.index(4))
-        right_plane = Plane(self.index(0), self.index(1), self.index(3))
+        left_plane = Plane(self[0], self[1], self[4])
+        right_plane = Plane(self[0], self[1], self[3])
 
-        distance_1 = right_plane.distance_from(self.index(2))
-        distance_2 = left_plane.distance_from(self.index(2))
+        distance_1 = right_plane.distance_from(self[2])
+        distance_2 = left_plane.distance_from(self[2])
         right_distance = distance_1 if abs(distance_1) < abs(distance_2) else distance_2
 
-        distance_3 = right_plane.distance_from(self.index(5))
-        distance_4 = left_plane.distance_from(self.index(5))
+        distance_3 = right_plane.distance_from(self[5])
+        distance_4 = left_plane.distance_from(self[5])
         left_distance = distance_3 if abs(distance_3) < abs(distance_4) else distance_4
 
         is_chair = (abs(right_distance) > self.config.o.t_out
@@ -128,14 +127,14 @@ class Oxane(SixAtomRing):
         if not self.find_plane(self.config.o.t_in, 1, 2, 3):
             return False
 
-        left_plane = Plane(self.index(0), self.index(1), self.index(3))
-        right_plane = Plane(self.index(0), self.index(1), self.index(2))
-        dist1 = right_plane.distance_from(self.index(4))
-        dist2 = left_plane.distance_from(self.index(4))
+        left_plane = Plane(self[0], self[1], self[3])
+        right_plane = Plane(self[0], self[1], self[2])
+        dist1 = right_plane.distance_from(self[4])
+        dist2 = left_plane.distance_from(self[4])
         right_dist = dist1 if abs(dist1) < abs(dist2) else dist2
 
-        dist3 = right_plane.distance_from(self.index(5))
-        dist4 = left_plane.distance_from(self.index(5))
+        dist3 = right_plane.distance_from(self[5])
+        dist4 = left_plane.distance_from(self[5])
         left_dist = dist3 if abs(dist3) < abs(dist4) else dist4
 
         is_half_chair = (abs(right_dist) > self.config.o.t_out and
@@ -152,13 +151,13 @@ class Oxane(SixAtomRing):
         if not self.find_plane(self.config.o.t_in):
             return False
 
-        left_plane = Plane(self.index(0), self.index(1), self.index(4))
-        right_plane = Plane(self.index(0), self.index(1), self.index(3))
+        left_plane = Plane(self[0], self[1], self[4])
+        right_plane = Plane(self[0], self[1], self[3])
 
-        dist1 = right_plane.distance_from(self.index(2))
-        dist2 = left_plane.distance_from(self.index(2))
-        dist3 = right_plane.distance_from(self.index(5))
-        dist4 = left_plane.distance_from(self.index(5))
+        dist1 = right_plane.distance_from(self[2])
+        dist2 = left_plane.distance_from(self[2])
+        dist3 = right_plane.distance_from(self[5])
+        dist4 = left_plane.distance_from(self[5])
         right_distance = dist1 if abs(dist1) < abs(dist2) else dist2
         left_distance = dist3 if abs(dist3) < abs(dist4) else dist4
 
@@ -182,35 +181,35 @@ class Oxane(SixAtomRing):
         self.out_of_plane_atoms[0].position = ABOVE if rd > 0 else UNDER
         self.out_of_plane_atoms[1].position = ABOVE if lf > 0 else UNDER
 
-        self.out_of_plane_atoms[0].atom = self.index(self.get_index_by_oxygen(i1))
-        self.out_of_plane_atoms[1].atom = self.index(self.get_index_by_oxygen(i2))
+        self.out_of_plane_atoms[0].atom = self[self.get_index_by_oxygen(i1)]
+        self.out_of_plane_atoms[1].atom = self[self.get_index_by_oxygen(i2)]
 
     def is_envelope(self) -> bool:
         if not self.find_plane(self.config.o.t_in):
             return False
 
-        left_plane = Plane(self.index(0), self.index(1), self.index(4))
-        right_plane = Plane(self.index(0), self.index(1), self.index(3))
-        right_distance = min(right_plane.distance_from(self.index(2)),
-                             left_plane.distance_from(self.index(2)),
+        left_plane = Plane(self[0], self[1], self[4])
+        right_plane = Plane(self[0], self[1], self[3])
+        right_distance = min(right_plane.distance_from(self[2]),
+                             left_plane.distance_from(self[2]),
                              key=abs)
-        left_distance = min(right_plane.distance_from(self.index(5)),
-                            left_plane.distance_from(self.index(5)),
+        left_distance = min(right_plane.distance_from(self[5]),
+                            left_plane.distance_from(self[5]),
                             key=abs)
 
-        is_envelope = (((left_plane.is_on_plane(self.index(2), self.config.o.t_in) and
-                        right_plane.is_on_plane(self.index(2), self.config.o.t_in)) !=
-                       (left_plane.is_on_plane(self.index(5), self.config.o.t_in) and
-                        right_plane.is_on_plane(self.index(5), self.config.o.t_in))) and
-                       ((left_plane.is_on_plane(self.index(2), self.config.o.t_in) ==
-                         right_plane.is_on_plane(self.index(2), self.config.o.t_in)) and
-                        (left_plane.is_on_plane(self.index(5), self.config.o.t_in) ==
-                         right_plane.is_on_plane(self.index(5), self.config.o.t_in))))
+        is_envelope = (((left_plane.is_on_plane(self[2], self.config.o.t_in) and
+                        right_plane.is_on_plane(self[2], self.config.o.t_in)) !=
+                       (left_plane.is_on_plane(self[5], self.config.o.t_in) and
+                        right_plane.is_on_plane(self[5], self.config.o.t_in))) and
+                       ((left_plane.is_on_plane(self[2], self.config.o.t_in) ==
+                         right_plane.is_on_plane(self[2], self.config.o.t_in)) and
+                        (left_plane.is_on_plane(self[5], self.config.o.t_in) ==
+                         right_plane.is_on_plane(self[5], self.config.o.t_in))))
 
         if is_envelope:
             self.set_oopa(right_distance, left_distance, 2, 5)
-            self.out_of_plane_atoms[0].presence = not left_plane.is_on_plane(self.index(2), self.config.o.t_in)
-            self.out_of_plane_atoms[1].presence = not left_plane.is_on_plane(self.index(5), self.config.o.t_in)
+            self.out_of_plane_atoms[0].presence = not left_plane.is_on_plane(self[2], self.config.o.t_in)
+            self.out_of_plane_atoms[1].presence = not left_plane.is_on_plane(self[5], self.config.o.t_in)
 
         return is_envelope
 
@@ -218,13 +217,13 @@ class Oxane(SixAtomRing):
         if not self.find_plane(self.config.o.t_in, 1, 2, 4):
             return False
 
-        left_plane = Plane(self.index(0), self.index(1), self.index(4))
-        right_plane = Plane(self.index(0), self.index(1), self.index(2))
-        right_distance = min(right_plane.distance_from(self.index(3)),
-                             left_plane.distance_from(self.index(3)),
+        left_plane = Plane(self[0], self[1], self[4])
+        right_plane = Plane(self[0], self[1], self[2])
+        right_distance = min(right_plane.distance_from(self[3]),
+                             left_plane.distance_from(self[3]),
                              key=abs)
-        left_distance = min(right_plane.distance_from(self.index(5)),
-                            left_plane.distance_from(self.index(5)),
+        left_distance = min(right_plane.distance_from(self[5]),
+                            left_plane.distance_from(self[5]),
                             key=abs)
 
         is_skew = ((abs(right_distance) > self.config.o.t_out and
