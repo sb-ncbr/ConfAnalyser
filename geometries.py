@@ -127,15 +127,13 @@ class Plane:
         """
         Calculates a distance of a given point from this plane
         """
-        # print(f"[PLANE] Calculating distance of {self} and {point}")
-        try:
-            return ((self.a * point.x + self.b * point.y + self.c * point.z + self.d) /
-                    sqrt(self.a ** 2 + self.b ** 2 + self.c ** 2))
-        except Exception as e:
-            print(e)
+        # print(f"[PLANE] Calculating distance of {self} and {point}")wa
+        size = sqrt(self.a ** 2 + self.b ** 2 + self.c ** 2)
+        if size == 0:  # shouldn't happen if data is correct
             return 0
+        return ((self.a * point.x + self.b * point.y + self.c * point.z + self.d) / size)
 
-    # TODO: tolerance may6 be globalizes as an input parameter from file
+    # TODO: tolerance may be globalizes as an input parameter from file
     def is_on_plane(self, point: Point, tolerance: float) -> bool:
         """
         Decides whether a given point is located on this plane.
