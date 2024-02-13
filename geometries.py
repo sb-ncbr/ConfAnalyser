@@ -34,19 +34,18 @@ class Point:
 
 class Vector(Point):
     def __init__(self, x: Union[float, Point] = 0.0, y: Union[float, Point] = 0.0, z: float = 0.0):
+        # Creating vector from two points
+        if isinstance(x, Point) and isinstance(y, Point) and isinstance(z, float):
+            p1, p2 = x, y
+            super().__init__(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z)
+            # print(f"[VECTOR] Created {self} from two points {p1} and {p2}")
         # Creating vector from a single point
-        if isinstance(x, Point) and isinstance(y, float) and isinstance(z, float):
+        elif isinstance(y, float) and isinstance(x, Point) and isinstance(z, float):
             p1 = x
             super().__init__(p1.x, p1.y, p1.z)
             # print(f"[VECTOR] Created {self} from a single point {p1}")
 
-        # Creating vector from two points
-        elif isinstance(x, Point) and isinstance(y, Point) and isinstance(z, float):
-            p1, p2 = x, y
-            super().__init__(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z)
-            # print(f"[VECTOR] Created {self} from two points {p1} and {p2}")
-
-        # Creatubg vectir from three coordinates
+        # Creatubg vector from three coordinates
         elif isinstance(x, float) and isinstance(y, float) and isinstance(z, float):
             super().__init__(x, y, z)
             # print(f"[VECTOR] Created {self} from coordinates ({x}, {y}, {z})")
@@ -95,7 +94,7 @@ class Vector(Point):
         """
         Calculates a dot product between this and the other vector
         """
-        # print(f"[VECTOR] Dotting {self} and {other}")
+        # print(f"[VECTOR] Dotting {self} and {other} into {self.x * other.x + self.y * other.y + self.z * other.z}")
         return self.x * other.x + self.y * other.y + self.z * other.z
 
     def cross(self, other) -> Vector:
@@ -113,8 +112,8 @@ class Vector(Point):
 
 class Plane:
     def __init__(self, point1: Point, point2: Point, point3: Point):
-        self.u = Vector(point2, point1)
-        self.v = Vector(point2, point3)
+        self.u = Vector(point3, point2)  # x_4 - x_2
+        self.v = Vector(point2, point1)  # x_2 - x_1
         # print(f"[PLANE] Creating vector u = {self.u}, v = {self.v}")
         self.normal = self.u.cross(self.v)
         self.d = -(self.normal.x * point1.x + self.normal.y * point1.y + self.normal.z * point1.z)

@@ -30,6 +30,30 @@ class OxaneRecord:
         self.t_in = None
         self.t_out = None
 
+class OxaneV2Record:
+    def __init__(self):
+        self.t_flat_angle = None
+
+        self.t_chair_angle = None
+        self.t_chair_degree = None
+
+        self.t_boat_angle = None
+        self.t_boat_s_degree = None
+        self.t_boat_b_degree = None
+
+        self.t_half_angle = None
+        self.t_half_s_degree = None
+        self.t_half_m_degree = None
+        self.t_half_b_degree = None
+
+        self.t_skew_angle = None
+        self.t_skew_degree = None
+
+        self.t_envelope_angle = None
+        self.t_envelope_s_degree = None
+        self.t_envelope_m_degree = None
+        self.t_envelope_b_degree = None
+
 
 class Config:
     """
@@ -46,12 +70,14 @@ class Config:
         self.cyclopentane = CyclopentaneRecord()
         self.benzene = BenzeneRecord()
         self.oxane = OxaneRecord()
+        self.oxanev2 = OxaneV2Record()
 
         # Aliases to use instead of full names, when one feel brave
         self.cp: CyclopentaneRecord = self.cyclopentane
         self.ch: CyclohexaneRecord = self.cyclohexane
         self.b: BenzeneRecord = self.benzene
         self.o: OxaneRecord = self.oxane
+        self.o2: OxaneV2Record = self.oxanev2
 
         self.load_config()
 
@@ -71,8 +97,8 @@ class Config:
 
         lines = self.read_file()
 
-        if len(lines) != 23 and len(lines) != 24:
-            # TODO: Better message
+        if len(lines) != 41:
+            # TODO: Better message + make sure lines count is updated after removal of old oxane code
             print("Config file not loaded properly! Delete the `config.txt` file in the folder with main file and try "
                   "again.")
             exit(-1)
@@ -94,6 +120,28 @@ class Config:
 
         self.o.t_in = self.process_line(lines[21])
         self.o.t_out = self.process_line(lines[22])
+
+        self.o2.t_flat_angle = self.process_line(lines[25])
+
+        self.o2.t_chair_angle = self.process_line(lines[26])
+        self.o2.t_chair_degree = self.process_line(lines[27])
+
+        self.o2.t_boat_angle = self.process_line(lines[28])
+        self.o2.t_boat_s_degree = self.process_line(lines[29])
+        self.o2.t_boat_b_degree = self.process_line(lines[30])
+
+        self.o2.t_half_angle = self.process_line(lines[31])
+        self.o2.t_half_s_degree = self.process_line(lines[32])
+        self.o2.t_half_m_degree = self.process_line(lines[33])
+        self.o2.t_half_b_degree = self.process_line(lines[34])
+
+        self.o2.t_skew_angle = self.process_line(lines[35])
+        self.o2.t_skew_degree = self.process_line(lines[36])
+
+        self.o2.t_envelope_angle = self.process_line(lines[37])
+        self.o2.t_envelope_s_degree = self.process_line(lines[38])
+        self.o2.t_envelope_m_degree = self.process_line(lines[39])
+        self.o2.t_envelope_b_degree = self.process_line(lines[40])
 
     def get_config_file_path(self) -> str:
         return f"./{self.config_file_name}"
@@ -145,7 +193,25 @@ Tolerance flat in: 0.1
 
 Oxane:
 Tolerance in: 0.1
-Tolerance out: 0.3"""
+Tolerance out: 0.3
+
+Oxane V2:
+Flat angle tolerance: 5
+Chair angle tolerance: 10
+Chair expected angle: 35.26
+Boat angle tolerance: 10
+Boat expected small angle: 35.26
+Boat expected big angle: 74.20
+Half chair angle tolerance: 10
+Half chair expected small angle: 9.07
+Half chair expected medium angle: 17.83
+Half chair expected big angle: 42.16
+Skew angle tolerance: 10
+Skew expected angle: 50.84
+Envelope angle tolerance: 10
+Envelope expected small angle: 17.37
+Envelope expected medium angle: 35.26
+Envelope expected big angle: 46.86"""
 
         with open(self.get_config_file_path(), "w") as file:
             file.write(template)

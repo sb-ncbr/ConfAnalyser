@@ -4,6 +4,7 @@ from cyclohexane import Cyclohexane
 from cyclopentane import Cyclopentane
 from molecule import Molecule, MoleculeType
 from oxane import Oxane
+from oxane_v2 import Oxane_v2
 
 parallel = False
 
@@ -58,7 +59,8 @@ def work_file(resources) -> Optional[Molecule]:
 
     match molecule_type:
         case MoleculeType.Oxane:
-            molecule = Oxane(data)
+            molecule = Oxane_v2(data)
+            #molecule.updated_version = Oxane_v2(data)
         case MoleculeType.Cyclohexane:
             molecule = Cyclohexane(data)
         case MoleculeType.Cyclopentane:
