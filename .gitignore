@@ -245,6 +245,7 @@ oxanes
 oxanes_full
 benzenes
 config.txt
+*old.py
 
 out*
 *.zip
