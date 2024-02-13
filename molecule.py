@@ -30,14 +30,14 @@ class Conformation(Enum):
 
 class Molecule:
     # A static variable containing data loaded from atom_names file on startup
-    names: dict[str, list[list[str]]] = None
+    names: dict[str, list[set[str]]] = None
     # Config from which to load tolerances later
     config: Config = None
     # A list of all saved molecules
     molecules: list[Optional[Molecule]] = []
 
     @staticmethod
-    def initialize(names: dict[str, list[list[str]]]):
+    def initialize(names: dict[str, list[set[str]]]):
         """
         Initializes the static parameters of the entire Molecule class
         on the first call.

@@ -17,19 +17,19 @@ def load_file(file_name: str) -> list[str]:
         exit()
 
 
-def load_names(file_name: str) -> dict[str, list[list[str]]]:
+def load_names(file_name: str) -> dict[str, list[set[str]]]:
     lines = load_file(file_name)
-    out: dict[str, list[list[str]]] = dict()
+    out: dict[str, list[set[str]]] = dict()
     for line in lines:
         split_line = line.split()
         ligand = split_line[0]
         if ligand in out:
             for i, name in enumerate(split_line[1:]):
-                out[ligand][i].append(name)
+                out[ligand][i].add(name)
         else:
             out[ligand] = []
             for name in split_line[1:]:
-                out[ligand].append([name])
+                out[ligand].append({name})
     return out
 
 
