@@ -72,25 +72,37 @@ class Oxane(SixAtomRing):
         Runs the analysis of the molecule, first finding the main plane of the
         molecule, after that it checks for the possible conformations to be true.
         """
-        if self.is_flat():
-            self.conformation = Conformation.Flat
-        elif self.is_chair():
-            self.conformation = Conformation.Chair
-        elif self.is_half_chair():
-            self.conformation = Conformation.Half_Chair
-        elif self.is_boat():
-            self.conformation = Conformation.Boat
-        elif self.is_envelope():
-            self.conformation = Conformation.Envelope
-        elif self.is_skew():
-            self.conformation = Conformation.Skew
+
+        if self.find_plane(self.config.o.t_in):
+            ... # flat, chair, boat, envelope
+            if self.is_flat():
+                self.conformation = Conformation.Flat
+            elif self.is_chair():
+                self.conformation = Conformation.Chair
+            elif self.is_boat():
+                self.conformation = Conformation.Boat
+            elif self.is_envelope():
+                self.conformation = Conformation.Envelope
+            else:
+                self.conformation = Conformation.Undefined
+
+        elif self.find_plane(self.config.o.t_in, 1, 2, 3):
+            ... # half chair
+            if self.is_half_chair():  # 1, 2, 3
+                self.conformation = Conformation.Half_Chair
+            else:
+                self.conformation = Conformation.Undefined
+        elif self.find_plane(self.config.o.t_in, 1, 2, 4):
+            ... # skew
+            if self.is_skew():  # 1, 2, 4
+                self.conformation = Conformation.Skew
+            else:
+                self.conformation = Conformation.Undefined
         else:
             self.conformation = Conformation.Undefined
 
-    def is_flat(self) -> bool:
-        if not self.find_plane(self.config.o.t_in):
-            return False
 
+    def is_flat(self) -> bool:
         left_plane = Plane(self[0], self[1], self[4])
         right_plane = Plane(self[0], self[1], self[3])
 
@@ -100,9 +112,6 @@ class Oxane(SixAtomRing):
                 right_plane.is_on_plane(self[5], self.config.o.t_in))
 
     def is_chair(self) -> bool:
-        if not self.find_plane(self.config.o.t_in):
-            return False
-
         left_plane = Plane(self[0], self[1], self[4])
         right_plane = Plane(self[0], self[1], self[3])
 
@@ -124,9 +133,6 @@ class Oxane(SixAtomRing):
         return is_chair
 
     def is_half_chair(self) -> bool:
-        if not self.find_plane(self.config.o.t_in, 1, 2, 3):
-            return False
-
         left_plane = Plane(self[0], self[1], self[3])
         right_plane = Plane(self[0], self[1], self[2])
         dist1 = right_plane.distance_from(self[4])
@@ -147,10 +153,6 @@ class Oxane(SixAtomRing):
         return is_half_chair
 
     def is_boat(self) -> bool:
-        # print("\n\n\nBOAT\n\n\n")
-        if not self.find_plane(self.config.o.t_in):
-            return False
-
         left_plane = Plane(self[0], self[1], self[4])
         right_plane = Plane(self[0], self[1], self[3])
 
@@ -185,9 +187,6 @@ class Oxane(SixAtomRing):
         self.out_of_plane_atoms[1].atom = self[self.get_index_by_oxygen(i2)]
 
     def is_envelope(self) -> bool:
-        if not self.find_plane(self.config.o.t_in):
-            return False
-
         left_plane = Plane(self[0], self[1], self[4])
         right_plane = Plane(self[0], self[1], self[3])
         right_distance = min(right_plane.distance_from(self[2]),
@@ -214,9 +213,6 @@ class Oxane(SixAtomRing):
         return is_envelope
 
     def is_skew(self) -> bool:
-        if not self.find_plane(self.config.o.t_in, 1, 2, 4):
-            return False
-
         left_plane = Plane(self[0], self[1], self[4])
         right_plane = Plane(self[0], self[1], self[2])
         right_distance = min(right_plane.distance_from(self[3]),
