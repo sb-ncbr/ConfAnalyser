@@ -1,4 +1,4 @@
-from molecule import Molecule, MoleculeType
+from molecule import Molecule, MoleculeType, Conformation
 from geometries import Plane
 from atom import Atom
 
@@ -6,8 +6,7 @@ from atom import Atom
 class Ring(Molecule):
     def __init__(self, molecule_type: MoleculeType):
         super().__init__(molecule_type)
-        # TODO: Rework conformation into own enum? A class perhaps?
-        self.conformation = "UNDEFINED"
+        self.conformation = Conformation.Undefined
         self.has_plane = False
         self.begin = 0
 

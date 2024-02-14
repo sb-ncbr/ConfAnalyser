@@ -40,8 +40,7 @@ class Oxane(SixAtomRing):
 
     def __str__(self):
         #angles = ", ".join(str(x) for x in self.updated_version.angles)
-        return (f"{self.file_name}: {self.conformation.name.upper()} -> "
-                f"{self.updated_version.angles}: {self.updated_version.conformation.name.upper()}")
+        return (f"{self.file_name}: {self.conformation.name.upper()}")
 
     def validate_atoms(self) -> None:
         """

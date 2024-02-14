@@ -249,3 +249,10 @@ config.txt
 
 out*
 *.zip
+
+# workflow folders and files
+filtered_ligands*
+tmp
+SiteBinderCMD
+HelperModule
+CreateTemplates.py
