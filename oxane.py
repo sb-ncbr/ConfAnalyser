@@ -28,6 +28,8 @@ class Oxane(SixAtomRing):
         # Currently useless??
         self.out_of_plane_atoms: list[OutOfPlaneAtom] = [OutOfPlaneAtom(), OutOfPlaneAtom()]
 
+        self.updated_version = None
+
         try:
             self.create_from_source(source_line)
             self.validate_atoms()
@@ -35,6 +37,11 @@ class Oxane(SixAtomRing):
                 self.analyze()
         except Exception as e:  # should not happen but just in case, so we don't kill program
             print(e)
+
+    def __str__(self):
+        #angles = ", ".join(str(x) for x in self.updated_version.angles)
+        return (f"{self.file_name}: {self.conformation.name.upper()} -> "
+                f"{self.updated_version.angles}: {self.updated_version.conformation.name.upper()}")
 
     def validate_atoms(self) -> None:
         """
@@ -123,9 +130,9 @@ class Oxane(SixAtomRing):
         distance_4 = left_plane.distance_from(self[5])
         left_distance = distance_3 if abs(distance_3) < abs(distance_4) else distance_4
 
-        is_chair = (abs(right_distance) > self.config.o.t_out
-                    and abs(left_distance) > self.config.o.t_out
-                    and (right_distance * left_distance < 0))
+        is_chair = (abs(right_distance) > self.config.o.t_out and
+                    abs(left_distance) > self.config.o.t_out and
+                    (right_distance * left_distance < 0))
 
         if is_chair:
             self.set_oopa(right_distance, left_distance, 2, 5)
@@ -135,13 +142,13 @@ class Oxane(SixAtomRing):
     def is_half_chair(self) -> bool:
         left_plane = Plane(self[0], self[1], self[3])
         right_plane = Plane(self[0], self[1], self[2])
-        dist1 = right_plane.distance_from(self[4])
-        dist2 = left_plane.distance_from(self[4])
-        right_dist = dist1 if abs(dist1) < abs(dist2) else dist2
 
-        dist3 = right_plane.distance_from(self[5])
-        dist4 = left_plane.distance_from(self[5])
-        left_dist = dist3 if abs(dist3) < abs(dist4) else dist4
+        right_dist = min(right_plane.signed_distance_from(self[4]),
+                         left_plane.signed_distance_from(self[4]),
+                         key=abs)
+        left_dist = min(right_plane.signed_distance_from(self[5]),
+                        left_plane.signed_distance_from(self[5]),
+                        key=abs)
 
         is_half_chair = (abs(right_dist) > self.config.o.t_out and
                          abs(left_dist) > self.config.o.t_out and
@@ -187,23 +194,55 @@ class Oxane(SixAtomRing):
         self.out_of_plane_atoms[1].atom = self[self.get_index_by_oxygen(i2)]
 
     def is_envelope(self) -> bool:
+        """
+        IsEnvelope(Molecule, ToleranceIn):
+            Atom 1, ..., Atom 6 = Molecule's atoms
+
+            leftPlane = Plane of Atom 1, Atom 2 and Atom 5
+            rightPlane = Plane of Atom 1, Atom 2 and Atom 4
+
+            rightDistance = minimum of distances of Atom 3 from rightPlane and leftPlane
+            leftDistance = minimum of distances of Atom 6 from rightPlane and leftPlane
+
+            atom3IsOnMainPlane = distance of Atom 3 from leftPlane < ToleranceIn AND
+                                 distance of Atom 3 from rightPlane < ToleranceIn
+
+            atom6IsOnMainPlane = distance of Atom 6 from leftPlane < ToleranceIn AND
+                                 distance of Atom 6 from rightPlane < ToleranceIn
+
+            atom3IsOnBothPlanes = distance of Atom 3 from leftPlane < ToleranceIn ==
+                                  distance of Atom 3 from rightPlane < ToleranceIn
+
+            atom6IsOnBothPlanes = distance of Atom 6 from leftPlane < ToleranceIn ==
+                                  distance of Atom 6 from rightPlane < ToleranceIn
+
+            onlyOneAtomIsOnMainPlane = atom3IsOnMainPlane XOR atom6IsOnMainPlane
+            bothAtomsAreEitherOnOrOffMainPlane = atom3IsOnBothPlanes AND atom6IsOnBothPlanes
+
+            IF onlyOneAtomIsOnMainPlane AND bothAtomsAreEitherOnOrOffMainPlane
+            THEN
+                RETURN TRUE
+            ELSE
+                RETURN FALSE
+            FI
+
+        """
         left_plane = Plane(self[0], self[1], self[4])
         right_plane = Plane(self[0], self[1], self[3])
-        right_distance = min(right_plane.distance_from(self[2]),
-                             left_plane.distance_from(self[2]),
-                             key=abs)
-        left_distance = min(right_plane.distance_from(self[5]),
-                            left_plane.distance_from(self[5]),
-                            key=abs)
+        right_distance = min(right_plane.true_distance_from(self[2]),
+                             left_plane.true_distance_from(self[2]))
+        left_distance = min(right_plane.true_distance_from(self[5]),
+                            left_plane.true_distance_from(self[5]))
 
-        is_envelope = (((left_plane.is_on_plane(self[2], self.config.o.t_in) and
-                        right_plane.is_on_plane(self[2], self.config.o.t_in)) !=
-                       (left_plane.is_on_plane(self[5], self.config.o.t_in) and
-                        right_plane.is_on_plane(self[5], self.config.o.t_in))) and
-                       ((left_plane.is_on_plane(self[2], self.config.o.t_in) ==
-                         right_plane.is_on_plane(self[2], self.config.o.t_in)) and
-                        (left_plane.is_on_plane(self[5], self.config.o.t_in) ==
-                         right_plane.is_on_plane(self[5], self.config.o.t_in))))
+        left_on_plane_2 = left_plane.is_on_plane(self[2], self.config.o.t_in)
+        right_on_plane_2 = right_plane.is_on_plane(self[2], self.config.o.t_in)
+        left_on_plane_5 = left_plane.is_on_plane(self[5], self.config.o.t_in)
+        right_on_plane_5 = right_plane.is_on_plane(self[5], self.config.o.t_in)
+
+        is_envelope = (((left_on_plane_2 and right_on_plane_2) !=
+                       (left_on_plane_5 and right_on_plane_5)) and
+                       ((left_on_plane_2 ==right_on_plane_2) and
+                        (left_on_plane_5 ==right_on_plane_5)))
 
         if is_envelope:
             self.set_oopa(right_distance, left_distance, 2, 5)

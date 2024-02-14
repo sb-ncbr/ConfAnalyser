@@ -41,7 +41,7 @@ def run(paths_file: str, names_file: str, molecule_type: MoleculeType,
     data = [(file, names, cfg, molecule_type) for file in files]
 
     if parallel:
-        with Pool() as p:
+        with Pool(16) as p:
             Molecule.molecules = list(p.map(work_file, data))
     else:
         for file in data:

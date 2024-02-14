@@ -6,7 +6,7 @@ from molecule import Molecule, MoleculeType
 from oxane import Oxane
 from oxane_v2 import Oxane_v2
 
-parallel = False
+parallel = True
 
 
 def load_file(file_name: str) -> list[str]:

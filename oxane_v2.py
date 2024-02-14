@@ -122,9 +122,7 @@ class Oxane_v2(SixAtomRing):
         molecule, after that it checks for the possible conformations to be true.
         """
         self.calculate_properties()
-        if self.is_flat():
-            self.conformation = Conformation.Flat
-        elif self.is_chair():
+        if self.is_chair():
             self.conformation = Conformation.Chair
         elif self.is_boat():
             self.conformation = Conformation.Boat
@@ -134,20 +132,18 @@ class Oxane_v2(SixAtomRing):
             self.conformation = Conformation.Skew
         elif self.is_envelope():
             self.conformation = Conformation.Envelope
+        elif self.is_flat():
+            self.conformation = Conformation.Flat
         else:
             self.conformation = Conformation.Undefined
 
     def is_flat(self) -> bool:
-        distance = 0
         for angle in self.angles:
-            if -self.config.o2.t_flat_angle < angle < self.config.o2.t_flat_angle:
-                distance += abs(angle)
-            else:
+            if not -self.config.o2.t_flat_angle < angle < self.config.o2.t_flat_angle:
                 return False
         return True
 
     def is_chair(self) -> bool:
-        distance = 0
         all_same_side = (self.angles[0] < 0 and self.angles[1] < 0 and self.angles[2] < 0) or \
                         (self.angles[0] > 0 and self.angles[1] > 0 and self.angles[2] > 0)
         if not all_same_side:
@@ -156,9 +152,7 @@ class Oxane_v2(SixAtomRing):
         upper_limit = self.config.o2.t_chair_degree + self.config.o2.t_chair_angle
         lower_limit = self.config.o2.t_chair_degree - self.config.o2.t_chair_angle
         for angle in self.angles:
-            if lower_limit < abs(angle) < upper_limit:
-                distance += abs(angle - self.config.o2.t_chair_degree)
-            else:
+            if not lower_limit < abs(angle) < upper_limit:
                 return False
         return True
 
