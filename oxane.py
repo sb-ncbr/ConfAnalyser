@@ -36,7 +36,7 @@ class Oxane(SixAtomRing):
             if self.is_valid:
                 self.analyze()
         except Exception as e:  # should not happen but just in case, so we don't kill program
-            print(e)
+            print(f"Error 3: {e}")
 
     def __str__(self):
         #angles = ", ".join(str(x) for x in self.updated_version.angles)

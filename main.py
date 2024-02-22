@@ -13,13 +13,6 @@ from config import Config
 from worker import load_file, load_names, work_file, parallel
 
 
-# default option for parallel processing, currently in run() as well
-
-
-
-
-
-
 def run(paths_file: str, names_file: str, molecule_type: MoleculeType,
         print_list: bool, print_summary: bool, print_all: bool):
     # paths_file, names_file, molecule_type, print_list, print_summary, print_all
@@ -59,6 +52,8 @@ def run(paths_file: str, names_file: str, molecule_type: MoleculeType,
         if len(Molecule.molecules) == 0:
             print("No molecules detected!")
         else:
+            if print_list or print_all:
+                print()
             Molecule.molecules[0].print_statistics()
 
 
@@ -124,4 +119,4 @@ if __name__ == "__main__":
     start_time = time.perf_counter()
     # run()
     main()
-    print(f"Program finished after {time.perf_counter() - start_time} seconds")
+    # print(f"Program finished after {time.perf_counter() - start_time} seconds")

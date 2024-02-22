@@ -6,7 +6,7 @@ from molecule import Molecule, MoleculeType
 from oxane import Oxane
 from oxane_v2 import Oxane_v2
 
-parallel = True
+parallel = False
 
 
 def load_file(file_name: str) -> list[str]:
@@ -24,6 +24,8 @@ def load_names(file_name: str) -> dict[str, list[set[str]]]:
     for line in lines:
         split_line = line.split()
         ligand = split_line[0]
+        if ligand[2] == "_":
+            ligand = ligand[0:2]
         if ligand in out:
             for i, name in enumerate(split_line[1:]):
                 out[ligand][i].add(name)

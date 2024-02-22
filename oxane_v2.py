@@ -428,11 +428,11 @@ class Oxane_v2(SixAtomRing):
             RETURN TRUE
         """
         sorted_atoms = sorted(self.angles)
-        small = abs(sorted_atoms[0])
+        small = sorted_atoms[0]
         medium = sorted_atoms[1]
         big = sorted_atoms[2]
         if small >= 0 or \
-            self.config.o2.t_skew_degree - self.config.o2.t_skew_angle < small < \
+            self.config.o2.t_skew_degree - self.config.o2.t_skew_angle < abs(small) < \
             self.config.o2.t_skew_degree + self.config.o2.t_skew_angle:
             return False
         if -self.config.o2.t_skew_angle < medium < self.config.o2.t_skew_angle:

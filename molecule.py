@@ -3,6 +3,7 @@ from atom import Atom
 from enum import Enum
 from config import Config
 from typing import Optional
+from sys import stderr
 
 from exceptions import InvalidSourceDataException
 
@@ -16,16 +17,18 @@ class MoleculeType(Enum):
 
 
 class Conformation(Enum):
-    Undefined = -1  # Fallback option when no conformation was found
-    Unanalysed = 0  # Default state of new molecule, no conformation found yet
-    Flat = 1  # Cyclopentane, Cyclohexane, Benzene, Oxane
-    Half_Chair = 2  # Cyclohexane, Oxane
-    Chair = 3  # Cyclohexane, Oxane
-    Boat = 4  # Cyclohexane, Oxane
-    Twisted_Boat = 5  # Cyclohexane, Benzene
-    Envelope = 6  # Cyclopentane, Oxane
-    Twist = 7  # Cyclopentane
-    Skew = 8  # Oxane
+                    #   | CyH CyP Ben Oxa |
+    Undefined = -1  #   |  x   x   x   x  |     Fallback option when no conformation was found
+    Unanalysed = 0  #   |  x   x   x   x  | Default state of new molecule, no conformation found yet
+                    #   |-----------------|
+    Flat = 1  #         |  x   x   x   x  |
+    Half_Chair = 2  #   |  x   -   -   x  |
+    Chair = 3  #        |  x   -   -   x  |
+    Boat = 4  #         |  x   -   -   x  |
+    Twisted_Boat = 5  # |  x   -   x   -  |
+    Envelope = 6  #     |  -   x   -   x  |
+    Twist = 7  #        |  -   x   -   -  |
+    Skew = 8  #         |  -   -   -   x  |
 
 
 class Molecule:
@@ -70,11 +73,11 @@ class Molecule:
             count = sum([1 if x.conformation == conf else 0 for x in Molecule.molecules])
             percentage = (count / total) * 100
             percentage = int(percentage) if percentage % 1 == 0 else percentage
-            print(f"{(conf.name.upper() + ':'):14}{count} ({percentage}%)")
+            print(f"{(conf.name.upper().replace('_', ' ') + ':'):14}{count} ({percentage}%)")
         print(f"{'TOTAL:':14}{total}")
 
     def __str__(self):
-        return f"{self.file_name}: {self.conformation.name.upper()}"
+        return f"{self.file_name}: {self.conformation.name.upper().replace('_', ' ')}"
 
     def set_file_name(self, path: str) -> None:
         """
@@ -172,7 +175,7 @@ class Molecule:
             for i in range(atom_count):
                 if atom.name in self.names[self.ligand][i]:
                     if new_lst[i] is not None:
-                        print(f"{atom.name} atom found twice!")
+                        print(f"{atom.name} atom found twice!", file=stderr)
                         self.is_valid = False
                         return
                     new_lst[i] = atom

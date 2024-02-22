@@ -19,7 +19,7 @@ class Cyclohexane(SixAtomRing):
             if self.is_valid:
                 self.analyze()
         except Exception as e:  # should not happen but just in case, so we don't kill program
-            print(e)
+            print(f"Error1: {e}")
 
     def analyze(self):
         """
