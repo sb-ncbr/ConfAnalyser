@@ -154,6 +154,6 @@ class Atom(Point):
                   f"Segment identifier: '{self.segment_identifier}'\n"
                   f"Element symbol: '{self.element_symbol}'\n"
                   f"Charge: '{self.charge}'")
-        output = f"Atom {self.name} - <{self.x}, {self.y}, {self.z}>"
+        output += f"Atom {self.name} - <{self.x}, {self.y}, {self.z}>"
         return output
 

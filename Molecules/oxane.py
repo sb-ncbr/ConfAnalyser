@@ -1,7 +1,10 @@
+from math import pi, acos, degrees
+from sys import stderr
+
 from Molecules.Components.rings import SixAtomRing
 from Molecules.Components.molecule import MoleculeType, Conformation
 from Molecules.Components.geometries import Plane, Vector
-from math import pi, acos, degrees
+
 
 class Oxane(SixAtomRing):
     def __init__(self, source_line: list[str]):
@@ -32,7 +35,7 @@ class Oxane(SixAtomRing):
             for i in range(atom_count):
                 if atom.name in self.names[self.ligand][i]:
                     if new_lst[i] is not None:
-                        print(f"{atom.name} atom found twice!")
+                        print(f"{atom.name} atom found twice!", file=stderr)
                         self.is_valid = False
                         return
                     new_lst[i] = atom
@@ -56,48 +59,6 @@ class Oxane(SixAtomRing):
         """
         This function calculates main properties of the ring based on which
         the conformations are later decided.
-
-        CalculateProperties(Molecule):
-            Atom 1, ..., Atom 6 = Molecule's atoms
-
-            axes = empty list
-            FOR i = 1 TO i == 3 DO
-                axe = Vector from Atom 2 * (i + 1) to Atom 2 * i
-                add axe vector to axes
-            END FOR
-
-            mainPlaneNormal = Normal vector to Axe 1 and Axe 2 made by crossing them
-
-            bondVectors = empty list
-            FOR i = 1 TO i == 6 DO
-                bondVector = Vector from Atom (i+1) modulo 6 to Atom i
-                add `bondVector` into bondVectors
-            END FOR
-
-            normals = empty list
-            FOR i = 1 TO i == 3 DO
-                normalVector = Vector made by crossing bond vector (i * 2 + 1) mod 6
-                               with bond vector i * 2
-                add `normalVector` into normals
-            END FOR
-
-            qVectors = empty list
-            FOR i = 1 TO i == 3 DO
-                qVector = Vector made by crossing axe i with normal vector i
-                add `qVector` into qVectors
-            END FOR
-
-            angles = empty list
-            FOR i = 1 TO i == 3 DO
-                numerator = dot product of `mainPlaneNormal` and q vector i
-                denominator = size of q vector i * size of `mainPlaneNormal`
-                acos = arccosine of `numerator` / `denominator`
-                theta = pi / 2 - acos
-                degrees = theta converted into degrees value
-                add `degrees` into angles
-            END FOR
-
-            set Molecule's angles variable to `angles`
         """
         # 1.) create a main plane from atoms indexed 0, 2, 4 along with axes
         axes = [] # deonted as a_i
@@ -166,18 +127,6 @@ class Oxane(SixAtomRing):
         """
         Validate whether the angles correspond to the values expected for
         the flat conformation.
-
-        IsFlat(Molecule, Tolerances):
-            FOR EACH angle IN Molecule's Angles DO
-                bottomLimit = Tolerance for flat angle * -1
-                upperLimit = Tolerance for flat angle
-                IF angle is smaller than bottomLimit or angle is bigger than upperLimit
-                THEN
-                    RETURN FALSE
-                FI
-            END FOR
-            RETURN TRUE
-        :return:
         """
         for angle in self.angles:
             if not -self.config.o2.t_flat_angle < angle < self.config.o2.t_flat_angle:
@@ -188,23 +137,6 @@ class Oxane(SixAtomRing):
         """
         Validate whether the angles and their properties correspond to the
         expected values for chair conformation.
-
-        IsChair(Molecule, Tolerances):
-            IF all three angles don't have same sign
-            THEN
-                RETURN FALSE
-            FI
-
-            lowerLimit = expected value of chair angle - chair angle tolerance
-            upperLimit = expected value of chair angle + chair angle tolerance
-
-            FOR EACH angle IN Molecule's angles DO
-                IF angle is lower than lowerLimit OR angle is bigger than upperLimit
-                THEN
-                    RETURN FALSE
-                FI
-            END FOR
-            RETURN TRUE
         """
         all_same_side = (self.angles[0] < 0 and self.angles[1] < 0 and self.angles[2] < 0) or \
                         (self.angles[0] > 0 and self.angles[1] > 0 and self.angles[2] > 0)
@@ -223,29 +155,6 @@ class Oxane(SixAtomRing):
         """
         Validate whether the angles and their properties correspond to the
         expected values for half chair conformation.
-
-        IsHalfChair(Molecule, Tolerances):
-            IF all three angles have same sign OR any of angles is 0
-            THEN
-                RETURN FALSE
-            FI
-
-            sortedAngles = sorted absolute values of Molecule's angles from
-                           smalles to biggest
-            small = angle from sortedAngles at index 1
-            medium = angle from sortedAngles at index 2
-            big = angle from sortedAngles at index 3
-
-            IF small is smaller than lower bound for small angle OR
-               small is bigger than upper bound for small angle  OR
-               medium is smaller than lower bound for medium angle OR
-               medium is bigger than upper bound for medium angle OR
-               big is smaller than lower bound for big angle OR
-               big is bigger than upper bound for big angle
-            THEN
-                RETURN FALSE
-            FI
-            RETURN TRUE
         """
         # we check if it's true that result have two negatives and one positive
         # or two positives and one negative result. Otherwise, not half chair
@@ -272,29 +181,6 @@ class Oxane(SixAtomRing):
         """
         Validate whether the angles and their properties correspond to the
         expected values for the boat conformation.
-
-        IsBoat(Molecule, Tolerances):
-            IF all three angles have same sign OR any of angles is 0
-            THEN
-                RETURN FALSE
-            FI
-
-            sortedAngles = sorted absolute values of Molecule's angles from
-                           smallest to biggest
-            small = angle from sortedAngles at index 1
-            medium = angle from sortedAngles at index 2
-            big = angle from sortedAngles at index 3
-
-            IF small is smaller than lower bound for smaller angle OR
-               small is bigger than upper bound for smaller angle  OR
-               medium is smaller than lower bound for smaller angle OR
-               medium is bigger than upper bound for smaller angle OR
-               big is smaller than lower bound for big angle OR
-               big is bigger than upper bound for big angle
-            THEN
-                RETURN FALSE
-            FI
-            RETURN TRUE
         """
         # we check if it's true that result have two negatives and one positive
         # or two positives and one negative result. Otherwise, not half chair
@@ -321,52 +207,6 @@ class Oxane(SixAtomRing):
         """
         Validate whether the angles and their properties correspond to the
         expected values for the envelope conformation.
-
-        IsEnvelope(Molecule, Tolerances):
-            sortedAngles = sorted values of Molecule's angles from
-                           smallest to biggest
-            middle = angle from sortedAngles at index 2
-            IF middle is bigger than angle tolerance for envelope * -1 AND
-               middle is smaller than angle tolerance for envelope
-            THEN
-                small = smaller value of absolute values of angles sortedAngles 1 and sortedAngles 3
-                big = bigger value of absolute values of angles sortedAngles 1 and sortedAngles 3
-
-                IF small is smaller than angle tolerance for envelope * -1 OR
-                   small is bigger than angle tolerance for envelope
-                THEN
-                    RETURN FALSE
-                FI
-
-                IF big is smaller than lower limit of envelope tolerance for big degree OR
-                   big is bigger than upper limit of envelope's tolerance for big degree
-                THEN
-                    RETURN FALSE
-                FI
-            ELSE
-                mid = absolute value of angle from sortedAngles at index 2
-
-                IF first two angles in sortedAngles are negative and third is positive
-                THEN
-                    small = absolute value of angle from sortedAngles at index 3
-                    big = absolute value of angle from sortedAngles at index 1
-                ELSE IF first angle in sortedAngles is negative and last two are positive
-                THEN
-                    small = absolute value of angle from sortedAngles at index 1
-                    big = absolute value of angle from sortedAngles at index 3
-                ELSE
-                    RETURN FALSE
-                FI
-
-                IF small is smaller than lower limit of envelope's tolerance for small angles OR
-                   small is bigger than upper limit of envelope's tolerance for small angles OR
-                   mid or big are smaller than lower limit for envelope's tolerance for middle angles OR
-                   mid or big are bigger than upper limit for envelope's tolerance for middle angles
-                THEN
-                    RETURN FALSE
-                FI
-            FI
-            RETURN TRUE
         """
         sorted_atoms = sorted(self.angles)
 
@@ -374,11 +214,13 @@ class Oxane(SixAtomRing):
         if -self.config.o2.t_envelope_angle < sorted_atoms[1] < self.config.o2.t_envelope_angle:
             bigger = max(abs(sorted_atoms[0]), abs(sorted_atoms[2]))
             smaller = min(abs(sorted_atoms[0]), abs(sorted_atoms[2]))
+
             if not -self.config.o2.t_envelope_angle < smaller < self.config.o2.t_envelope_angle:
                 return False
             if not self.config.o2.t_envelope_b_degree - self.config.o2.t_envelope_angle < bigger < \
                 self.config.o2.t_envelope_b_degree + self.config.o2.t_envelope_angle:
                 return False
+
         else: # non-zero case
             medium = abs(sorted_atoms[1])
             if sorted_atoms[0] < 0 and sorted_atoms[1] < 0 and sorted_atoms[2] > 0:
@@ -401,6 +243,7 @@ class Oxane(SixAtomRing):
             if not self.config.o2.t_envelope_m_degree - self.config.o2.t_envelope_angle < big < \
                 self.config.o2.t_envelope_m_degree + self.config.o2.t_envelope_angle:
                 return False
+
         return True
 
 
@@ -408,24 +251,6 @@ class Oxane(SixAtomRing):
         """
         Validate whether the angles and their properties correspond to the
         expected values for the skew conformation.
-
-        IsSkew(Molecule, Tolerances):
-            sortedAngles = sorted values of Molecule's angles from
-                           smallest to biggest
-            small = angle from sortedAngles at index 1
-            mid = angle from sortedAngles at index 2
-            big = angle from sortedAngles at index 3
-
-            IF small is smaller than lower bound for skew's angle tolerance OR
-               small is bigger than upper bound for skew's angle tolerance OR
-               mid is smaller than skew's angle tolerance * -1 OR
-               mid is bigger than skew's angle tolerance OR
-               big is smaller than lower bound for skew's angle tolerance OR
-               big is bigger than upper bound for skew's angle tolerance
-            THEN
-                RETURN FALSE
-            FI
-            RETURN TRUE
         """
         sorted_atoms = sorted(self.angles)
         small = sorted_atoms[0]

@@ -56,8 +56,10 @@ class Molecule:
     def __init__(self, molecule_type: MoleculeType):
         # A list of all atoms within a given molecule
         self.atoms: list[Atom] = []
+
         # A list of possible conformation states the molecule can be in
         self.conformations: list[Conformation] = [Conformation.Unanalysed, Conformation.Undefined]
+
         self.conformation: Conformation = Conformation.Unanalysed
         self.molecule_type: MoleculeType = molecule_type
         self.is_valid: bool = True
@@ -67,6 +69,10 @@ class Molecule:
         self.set_conformations()
 
     def print_statistics(self) -> None:
+        """
+        Calculates and prints out the summary of all the molecules that have
+        been processed and their conformation has been decided.
+        """
         print("SUMMARY\n-------")
         # Remove possible None-s from list from cases where file was ommited
         Molecule.molecules = [x for x in Molecule.molecules if x is not None]
@@ -78,7 +84,7 @@ class Molecule:
             print(f"{(conf.name.upper().replace('_', ' ') + ':'):14}{count} ({percentage}%)")
         print(f"{'TOTAL:':14}{total}")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.file_name}: {self.conformation.name.upper().replace('_', ' ')}"
 
     def set_file_name(self, path: str) -> None:
@@ -150,26 +156,6 @@ class Molecule:
         of atoms based on the order from the names file. In case of
         duplicate names within the same index of atom position, error
         out and cancel processing of this molecule as a result.
-
-        ValidateAtoms(Molecule):
-        atomsList = empty list of size of Molecule's atom count
-        FOR EACH atom of Molecule's atoms DO
-            FOR i = 1 to amount of Molecule's atoms DO
-                IF atom's name is in list of names for given ligand at index i THEN
-                    IF atomsList at index i is not empty THEN
-                        Molecule is invalid
-                        RETURN
-                    FI
-                    atomsList[i] = atom
-                    BREAK
-                FI
-            END FOR
-        END FOR
-        IF any empty place in atomsList
-            Molecule is invalid
-            RETURN
-        FI
-        Molecule's atoms list = atomsList
         """
         atom_count = self.get_atom_count()
         new_lst = [None for _ in range(atom_count)]
