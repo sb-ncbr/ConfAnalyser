@@ -12,6 +12,9 @@ class Cyclohexane(SixAtomRing):
         # Set the needed parameters
         self.source_file: list[str] = source_line
 
+        self.right_plane = None
+        self.left_plane = None
+
         try:
             self.create_from_source(source_line)
             self.validate_atoms()

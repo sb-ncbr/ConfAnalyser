@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from os import name as OS_NAME
+from os import name as os_name
 
 from Molecules.Components.molecule import Molecule, MoleculeType
 from Utils.config import Config
@@ -60,7 +60,7 @@ def argument_parser():
     Parse arguments from the command line.
     """
     parser = ArgumentParser(prog="python ConfAnalyser.py")
-    if OS_NAME == "posix":
+    if os_name == "posix":
         parser = ArgumentParser(prog="python3 ConfAnalyser.py")
 
     required = parser.add_argument_group('Required')
@@ -70,9 +70,9 @@ def argument_parser():
     required.add_argument("-n", "--name_list", required=True, type=str, action="store",
                           help="Read list of names of an atom ring FILE. Each line represents one ligand where"
                                "first word on each line is the ligand's name and all the following words on the line"
-                               "are trated as atom names. If ligand is not known or if name of the atom is not found"
+                               "are treated as atom names. If ligand is not known or if name of the atom is not found"
                                "in this list, atom will not be processed and will be omitted. In case of multiple"
-                               "name variatons, more lines with the same ligand name need to be present. Order of"
+                               "name variations, more lines with the same ligand name need to be present. Order of"
                                "atoms decides the order of atoms within the ring.")
 
     group = required.add_mutually_exclusive_group(required=True)
@@ -85,7 +85,7 @@ def argument_parser():
     optional.add_argument("-l", "--list", required=False, action='store_true',
                           help="Display results only as a list of molecules and their conformations.")
     optional.add_argument("-s", "--summary", required=False, action="store_true",
-                          help="Display results only as a short summary of relative occurances "
+                          help="Display results only as a short summary of relative occurrences "
                                "of conformations among tested molecules.")
     optional.add_argument("-a", "--all", required=False, action="store_true",
                           help="Display both list and summary. Default option when neither -s or -l is used.")
@@ -122,9 +122,9 @@ if __name__ == "__main__":
     if PARALLEL:
         from multiprocessing import Pool
 
-    start_time = 0
     if PERF_TEST:
         start_time = perf_counter()
-    main()
-    if PERF_TEST:
+        main()
         print(f"Program finished after {perf_counter() - start_time} seconds")
+    else:
+        main()

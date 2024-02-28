@@ -12,6 +12,8 @@ class Cyclopentane(FiveAtomRing):
         # Set the needed parameters
         self.source_file: list[str] = source_line
 
+        self.basePlane = None
+
         try:
             self.create_from_source(source_line)
             self.validate_atoms()
