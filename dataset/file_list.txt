@@ -1,4 +1,0 @@
-./dataset/00K_1a46_1.pdb
-./dataset/00P_1d9i_0.pdb
-./dataset/1AQ_4hy0_0.pdb
-./dataset/1AQ_4hy0_2.pdb
