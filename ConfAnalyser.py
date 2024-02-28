@@ -1,10 +1,10 @@
 from argparse import ArgumentParser
 from os import name as OS_NAME
 
-from molecule import Molecule, MoleculeType
-from config import Config
-from worker import work_file
-from utils import load_file, load_names
+from Molecules.Components.molecule import Molecule, MoleculeType
+from Utils.config import Config
+from Utils.worker import work_file
+from Utils.utils import load_file, load_names
 
 PERF_TEST = True
 PARALLEL = True
@@ -59,9 +59,9 @@ def argument_parser():
     """
     Parse arguments from the command line.
     """
-    parser = ArgumentParser(prog="python main.py")
+    parser = ArgumentParser(prog="python ConfAnalyser.py")
     if OS_NAME == "posix":
-        parser = ArgumentParser(prog="python3 main.py")
+        parser = ArgumentParser(prog="python3 ConfAnalyser.py")
 
     required = parser.add_argument_group('Required')
     required.add_argument('-i', '--input_list', required=True, type=str,

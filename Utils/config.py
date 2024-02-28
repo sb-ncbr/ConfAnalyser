@@ -65,7 +65,7 @@ class Config:
     """
 
     def __init__(self):
-        self.config_file_name = "config.txt"
+        self.config_file_name = "../config.txt"
         self.cyclohexane = CyclohexaneRecord()
         self.cyclopentane = CyclopentaneRecord()
         self.benzene = BenzeneRecord()

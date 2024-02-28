@@ -1,6 +1,6 @@
-from rings import SixAtomRing
-from molecule import MoleculeType, Conformation
-from geometries import Plane, Vector
+from Molecules.Components.rings import SixAtomRing
+from Molecules.Components.molecule import MoleculeType, Conformation
+from Molecules.Components.geometries import Plane, Vector
 from math import pi, acos, degrees
 
 class Oxane_v2(SixAtomRing):

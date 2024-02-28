@@ -1,4 +1,4 @@
-from geometries import Vector, Point
+from Molecules.Components.geometries import Vector, Point
 from math import degrees, acos, atan2
 
 

@@ -1,11 +1,11 @@
 from __future__ import annotations
-from atom import Atom
+from Molecules.Components.atom import Atom
 from enum import Enum
-from config import Config
+from Utils.config import Config
 from typing import Optional
 from sys import stderr
 
-from exceptions import InvalidSourceDataException
+from Utils.exceptions import InvalidSourceDataException
 
 
 class MoleculeType(Enum):

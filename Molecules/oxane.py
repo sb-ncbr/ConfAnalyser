@@ -1,9 +1,8 @@
 from typing import Optional
-from rings import SixAtomRing
-from molecule import MoleculeType, Conformation
-from geometries import Plane
-from atom import Atom
-import traceback
+from Molecules.Components.rings import SixAtomRing
+from Molecules.Components.molecule import MoleculeType, Conformation
+from Molecules.Components.geometries import Plane
+from Molecules.Components.atom import Atom
 
 # constants for denoting position of out-of-plane atoms
 ABOVE = 0

@@ -1,6 +1,5 @@
-from molecule import Molecule, MoleculeType, Conformation
-from geometries import Plane
-from atom import Atom
+from Molecules.Components.molecule import Molecule, MoleculeType, Conformation
+from Molecules.Components.geometries import Plane
 
 
 class Ring(Molecule):
