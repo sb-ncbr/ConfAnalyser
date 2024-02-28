@@ -56,7 +56,7 @@ class Config:
     and creates fields to be accessed by classes.
     Contains tolerances for inputs and outputs
 
-    When no config file exists, it creates one with default values
+    When no config file exists, one with default values is created
     """
 
     def __init__(self):
@@ -66,7 +66,7 @@ class Config:
         self.benzene = BenzeneRecord()
         self.oxanev2 = OxaneV2Record()
 
-        # Aliases to use instead of full names, when one feel brave
+        # Aliases to use instead of full names
         self.cp: CyclopentaneRecord = self.cyclopentane
         self.ch: CyclohexaneRecord = self.cyclohexane
         self.b: BenzeneRecord = self.benzene
@@ -143,7 +143,11 @@ class Config:
         by using floating point number with `,` instead of `.`
         :return: the loaded floating point number from the line
         """
-        return float(line.split(":")[1].replace(",", ".").replace("\n", "").replace("\r", ""))
+        return float(line.split(":")[1]
+                     .replace(",", ".")
+                     .replace("\n", "")
+                     .replace("\r", "")
+                     )
 
     def read_file(self) -> list[str]:
         """
