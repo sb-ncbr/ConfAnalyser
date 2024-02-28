@@ -20,6 +20,7 @@ def work_file(resources) -> Optional[Molecule]:
     if resources[4]:  # Is true if we're computing data multi-threaded
         Molecule.names = resources[1]
         Molecule.config = resources[2]
+
     filename = file.replace("\n", "").replace("\r", "")
     data = load_file(filename)
 

@@ -44,6 +44,8 @@ class Molecule:
         """
         Initializes the static parameters of the entire Molecule class
         on the first call.
+        When processing data in multi-threaded mode, config gets set
+        again within the worker class too.
         """
         if Molecule.names is None:
             Molecule.names = names
