@@ -1,50 +1,45 @@
-from typing import *
-import time
-from multiprocessing import Pool
 from argparse import ArgumentParser
-import os
+from os import name as OS_NAME
 
-from benzene import Benzene
-from cyclohexane import Cyclohexane
-from cyclopentane import Cyclopentane
-from oxane import Oxane
 from molecule import Molecule, MoleculeType
 from config import Config
-from worker import load_file, load_names, work_file, parallel
+from worker import work_file
+from utils import load_file, load_names
 
+PERF_TEST = True
+PARALLEL = True
 
 def run(paths_file: str, names_file: str, molecule_type: MoleculeType,
-        print_list: bool, print_summary: bool, print_all: bool):
-    # paths_file, names_file, molecule_type, print_list, print_summary, print_all
+        print_list: bool, print_summary: bool, print_all: bool) -> None:
+    """
+    Main runner function, loads all the data, creates dataset to run the
+    program on, initializes config file and then runs the program
+    either in single-thread mode or in multi-thread mode.
+    """
 
-    # mol_type = "oxanes"
-    # files = load_file(f"./{mol_type}/paths_to_pdbs.txt")
+    # Load data from the drive
     files = load_file(paths_file)
-    # files = load_file(f"./{mol_type}/ommited.txt")
-    # files = ["C:/oxanes/6UZ/patterns/6UZ_5klu_0.pdb"]
-    # files = load_file("./dataset/sing_test_file_path")
-    # names = load_names(f"./{mol_type}/atom_names.txt")
     names = load_names(names_file)
     cfg = Config()
-    # print(f"Loaded:")
-    # print_dict(names)
 
+    # Initialize the molecule structure with dictionary of atom names
     Molecule.initialize(names)
 
-    data = [(file, names, cfg, molecule_type) for file in files]
+    # Prepare the dataset to work on
+    data = [(file, names, cfg, molecule_type, PARALLEL) for file in files]
 
-    if parallel:
-        with Pool(16) as p:
+    # Run the analysis
+    if PARALLEL:
+        with Pool() as p:
             Molecule.molecules = list(p.map(work_file, data))
     else:
         for file in data:
             Molecule.molecules.append(work_file(file))
-            # print(f"{filename.split('/')[-1]}: {molecule.conformation.name.upper()}")
-    # print_dict(Molecule.names)
-    # for lst in names["18Y"]:
-    #     out = ", ".join(x for x in lst)
-    #     print(f"   -> {out}")
+
+    # Remove all the invalid entries due to errors
     Molecule.molecules = [x for x in Molecule.molecules if x is not None]
+
+    # Print out results based on input parameters
     if print_list or print_all:
         for m in Molecule.molecules:
             print(m)
@@ -54,13 +49,18 @@ def run(paths_file: str, names_file: str, molecule_type: MoleculeType,
         else:
             if print_list or print_all:
                 print()
+
+            # Call the print of statistics, the call is callable from any
+            # molecule, using 1st one is safe option.
             Molecule.molecules[0].print_statistics()
 
 
 def argument_parser():
-    # TODO: Check possible other options? os.name is "posix" for unix/posix systems, "nt" for windows
+    """
+    Parse arguments from the command line.
+    """
     parser = ArgumentParser(prog="python main.py")
-    if os.name == "posix":
+    if OS_NAME == "posix":
         parser = ArgumentParser(prog="python3 main.py")
 
     required = parser.add_argument_group('Required')
@@ -116,7 +116,15 @@ def main():
 
 
 if __name__ == "__main__":
-    start_time = time.perf_counter()
-    # run()
+    # Additional imports based on what is needed.
+    if PERF_TEST:
+        from time import perf_counter
+    if PARALLEL:
+        from multiprocessing import Pool
+
+    start_time = 0
+    if PERF_TEST:
+        start_time = perf_counter()
     main()
-    # print(f"Program finished after {time.perf_counter() - start_time} seconds")
+    if PERF_TEST:
+        print(f"Program finished after {perf_counter() - start_time} seconds")
