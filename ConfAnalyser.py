@@ -6,7 +6,7 @@ from Utils.config import Config
 from Utils.worker import work_file
 from Utils.utils import load_file, load_names
 
-PERF_TEST = True
+PERF_TEST = False
 PARALLEL = True
 
 def run(paths_file: str, names_file: str, molecule_type: MoleculeType,
