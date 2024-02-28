@@ -1,0 +1,324 @@
+Cyclohexane pseudocodes
+
+Analyze(Molecule, Tolerances...):
+    FindIdealPlane(ToleranceIn)
+
+    rightPlane = Plane between Atom 1, Atom 2 and Atom 4
+    leftPlane = Plane between Atom 1, Atom 2 and Atom 5
+
+    IF Molecule has ideal plane THEN
+        IF IsFlat(Molecule, Tolerances) THEN
+            conformation = Flat
+        ELSE IF IsHalfChair(Molecule, Tolerances) THEN
+            conformation = Half Chair
+        ELSE IF IsChair(Molecule, Tolerances) THEN
+            conformation = Chair
+        ELSE IF IsBoat(Molecule, Tolerances) THEN
+            conformation = Boat
+        ELSE
+            conformation = Undefined
+        FI
+    ELSE
+        IF IsTwistedBoat(Molecule, Tolerances) THEN
+            conformation = Twisted Boat
+        ELSE
+            conformation = Undefined
+        FI
+    FI
+
+
+IsFlat(Molecule, FlatTolerance):
+    Atom 1, ..., Atom 6 = Molecule Atoms
+
+    IF distance between rightPlane and Atom 3 < FlatTolerance AND
+       distance between rightPlane and Atom 6 < FlatTolerance AND
+       distance between leftPlane and Atom 3 < FlatTolerance AND
+       distance between leftPlane and Atom 6 < FlatTolerance
+    THEN
+        RETURN TRUE
+    ELSE
+        RETURN FALSE
+    FI
+
+IsHalfChair(Molecule, FlatTolerance, XTolerance):
+    Atom 1, ..., Atom 6 = Molecule Atoms
+
+    mainPlane = Molecule right plane
+    atom3Distance = distance between mainPlane and Atom 3
+    atom6Distance = distance between mainPlane and Atom 6
+
+    atom5IsOnTheMainPlane = distance between mainPlane and Atom 5 < FlatTolerance
+
+    onlyOneAtomIsOutOfMainPlane = atom3Distance < FlatTolerance XOR
+                                  atom6Distance < FlatTolerance
+
+    onlyOneAtomIsFarFromPlane = atom3Distance > XTolerance XOR
+                                atom5Distance > XTolerance
+
+    IF onlyOneAtomIsOutOfMainPlane AND
+       onlyOneAtomIsFarFromPlane AND
+       atom5IsOnTheMainPlane
+    THEN
+        RETURN TRUE
+    ELSE
+        RETURN FALSE
+    FI
+
+IsChair(Molecule, ToleranceOut):
+    Atom 1, ..., Atom 6 = Molecule Atoms
+
+    mainPlane = Molecule right plane
+
+    IF distance between mainPlane and Atom 3 > ToleranceOut AND
+       distance between mainPlane and Atom 6 > ToleranceOut AND
+       Atom 3 and Atom 6 are on opposite sides of mainPlane
+    THEN
+        RETURN TRUE
+    ELSE
+        RETURN FALSE
+    FI
+
+IsBoat(Molecule, ToleranceOut):
+    Atom 1, ..., Atom 6 = Molecule Atoms
+
+    mainPlane = Molecule right plane
+
+    IF distance between mainPlane and Atom 3 > ToleranceOut AND
+       distance between mainPlane and Atom 6 > ToleranceOut AND
+       Atom 3 and Atom 6 are the same side of mainPlane
+    THEN
+        RETURN TRUE
+    ELSE
+        RETURN FALSE
+    FI
+
+IsTwistedBoat(Molecule, ToleranceAngle, ToleranceTwBoatAngle, ToleranceTwOut):
+    Atom 1, ..., Atom 6 = Molecule Atoms
+
+    atom3Distance = distance of Atom 3 from Molecule's right plane
+    atom6Distance = distance of Atom 6 from Molecule's left plane
+    twistAngle = absolute value of dihedral angle of Atom 2, Atom 4, Atom 5, Atom 1
+    IF ToleranceTwBoatAngle - ToleranceAngle < twistAngle  AND
+       twistAngle < ToleranceTwBoatAngle + ToleranceAngle AND
+       absolute value of atom3Distance > ToleranceTwOut AND
+       absolute value of atom6Distance > ToleranceTwOut AND
+       atom3Distance * atom5Distance > 0
+    THEN
+        RETURN TRUE
+    ELSE
+        RETURN FALSE
+    FI
+
+
+
+Benzene pseudocodes:
+
+IsFlat(Molecule, ToleranceFlatIn):
+    Atom 1, ..., Atom 6 = Molecule's atoms
+    rightPlane = Plane between Atom 1, Atom 2 and Atom 4
+    leftPlane = Plane between Atom 1, Atom 2 and Atom 5
+    IF distance between rightPlane and Atom 3 < ToleranceFlatIn AND
+       distance between rightPlane and Atom 6 < ToleranceFlatIn AND
+       distance between leftPlane and Atom 3 < ToleranceFlatIn AND
+       distance between lestPlane and Atom 6 < ToleranceFlatIn
+    THEN
+        RETURN TRUE
+    ELSE
+        RETURN FALSE
+    FI
+
+
+
+Cyclopentane pseudocodes:
+
+perhaps add twist...
+
+
+
+Oxane pseudocodes:
+
+CalculateProperties(Molecule):
+    Atom 1, ..., Atom 6 = Molecule's atoms
+
+    axes = empty list
+    FOR i = 1 TO i == 3 DO
+        axe = Vector from Atom 2 * (i + 1) to Atom 2 * i
+        add axe vector to axes
+    END FOR
+
+    mainPlaneNormal = Normal vector to Axe 1 and Axe 2 made by crossing them
+
+    bondVectors = empty list
+    FOR i = 1 TO i == 6 DO
+        bondVector = Vector from Atom (i+1) modulo 6 to Atom i
+        add `bondVector` into bondVectors
+    END FOR
+
+    normals = empty list
+    FOR i = 1 TO i == 3 DO
+        normalVector = Vector made by crossing bond vector (i * 2 + 1) mod 6
+                       with bond vector i * 2
+        add `normalVector` into normals
+    END FOR
+
+    qVectors = empty list
+    FOR i = 1 TO i == 3 DO
+        qVector = Vector made by crossing axe i with normal vector i
+        add `qVector` into qVectors
+    END FOR
+
+    angles = empty list
+    FOR i = 1 TO i == 3 DO
+        numerator = dot product of `mainPlaneNormal` and q vector i
+        denominator = size of q vector i * size of `mainPlaneNormal`
+        acos = arccosine of `numerator` / `denominator`
+        theta = pi / 2 - acos
+        degrees = theta converted into degrees value
+        add `degrees` into angles
+    END FOR
+
+    set Molecule's angles variable to `angles`
+
+
+IsFlat(Molecule, Tolerances):
+    FOR EACH angle IN Molecule's Angles DO
+        bottomLimit = Tolerance for flat angle * -1
+        upperLimit = Tolerance for flat angle
+        IF angle is smaller than bottomLimit or angle is bigger than upperLimit
+        THEN
+            RETURN FALSE
+        FI
+    END FOR
+    RETURN TRUE
+
+
+IsChair(Molecule, Tolerances):
+    IF all three angles don't have same sign
+    THEN
+        RETURN FALSE
+    FI
+
+    lowerLimit = expected value of chair angle - chair angle tolerance
+    upperLimit = expected value of chair angle + chair angle tolerance
+
+    FOR EACH angle IN Molecule's angles DO
+        IF angle is lower than lowerLimit OR angle is bigger than upperLimit
+        THEN
+            RETURN FALSE
+        FI
+    END FOR
+    RETURN TRUE
+
+
+IsHalfChair(Molecule, Tolerances):
+    IF all three angles have same sign OR any of angles is 0
+    THEN
+        RETURN FALSE
+    FI
+
+    sortedAngles = sorted absolute values of Molecule's angles from
+                   smalles to biggest
+    small = angle from sortedAngles at index 1
+    medium = angle from sortedAngles at index 2
+    big = angle from sortedAngles at index 3
+
+    IF small is smaller than lower bound for small angle OR
+       small is bigger than upper bound for small angle  OR
+       medium is smaller than lower bound for medium angle OR
+       medium is bigger than upper bound for medium angle OR
+       big is smaller than lower bound for big angle OR
+       big is bigger than upper bound for big angle
+    THEN
+        RETURN FALSE
+    FI
+    RETURN TRUE
+
+
+IsBoat(Molecule, Tolerances):
+    IF all three angles have same sign OR any of angles is 0
+    THEN
+        RETURN FALSE
+    FI
+
+    sortedAngles = sorted absolute values of Molecule's angles from
+                   smallest to biggest
+    small = angle from sortedAngles at index 1
+    medium = angle from sortedAngles at index 2
+    big = angle from sortedAngles at index 3
+
+    IF small is smaller than lower bound for smaller angle OR
+       small is bigger than upper bound for smaller angle  OR
+       medium is smaller than lower bound for smaller angle OR
+       medium is bigger than upper bound for smaller angle OR
+       big is smaller than lower bound for big angle OR
+       big is bigger than upper bound for big angle
+    THEN
+        RETURN FALSE
+    FI
+    RETURN TRUE
+
+
+IsEnvelope(Molecule, Tolerances):
+    sortedAngles = sorted values of Molecule's angles from
+                   smallest to biggest
+    middle = angle from sortedAngles at index 2
+    IF middle is bigger than angle tolerance for envelope * -1 AND
+       middle is smaller than angle tolerance for envelope
+    THEN
+        small = smaller value of absolute values of angles sortedAngles 1 and sortedAngles 3
+        big = bigger value of absolute values of angles sortedAngles 1 and sortedAngles 3
+
+        IF small is smaller than angle tolerance for envelope * -1 OR
+           small is bigger than angle tolerance for envelope
+        THEN
+            RETURN FALSE
+        FI
+
+        IF big is smaller than lower limit of envelope tolerance for big degree OR
+           big is bigger than upper limit of envelope's tolerance for big degree
+        THEN
+            RETURN FALSE
+        FI
+    ELSE
+        mid = absolute value of angle from sortedAngles at index 2
+
+        IF first two angles in sortedAngles are negative and third is positive
+        THEN
+            small = absolute value of angle from sortedAngles at index 3
+            big = absolute value of angle from sortedAngles at index 1
+        ELSE IF first angle in sortedAngles is negative and last two are positive
+        THEN
+            small = absolute value of angle from sortedAngles at index 1
+            big = absolute value of angle from sortedAngles at index 3
+        ELSE
+            RETURN FALSE
+        FI
+
+        IF small is smaller than lower limit of envelope's tolerance for small angles OR
+           small is bigger than upper limit of envelope's tolerance for small angles OR
+           mid or big are smaller than lower limit for envelope's tolerance for middle angles OR
+           mid or big are bigger than upper limit for envelope's tolerance for middle angles
+        THEN
+            RETURN FALSE
+        FI
+    FI
+    RETURN TRUE
+
+
+IsSkew(Molecule, Tolerances):
+    sortedAngles = sorted values of Molecule's angles from
+                   smallest to biggest
+    small = angle from sortedAngles at index 1
+    mid = angle from sortedAngles at index 2
+    big = angle from sortedAngles at index 3
+
+    IF small is smaller than lower bound for skew's angle tolerance OR
+       small is bigger than upper bound for skew's angle tolerance OR
+       mid is smaller than skew's angle tolerance * -1 OR
+       mid is bigger than skew's angle tolerance OR
+       big is smaller than lower bound for skew's angle tolerance OR
+       big is bigger than upper bound for skew's angle tolerance
+    THEN
+        RETURN FALSE
+    FI
+    RETURN TRUE
