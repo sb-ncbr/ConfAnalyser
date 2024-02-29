@@ -13,22 +13,20 @@ class MoleculeType(Enum):
     Cyclopentane = 1
     Cyclohexane = 2
     Benzene = 3
-    Oxane = 4
 
 
 class Conformation(Enum):
-                    #   | CyH CyP Ben Oxa |
-    Undefined = -1  #   |  x   x   x   x  |     Fallback option when no conformation was found
-    Unanalysed = 0  #   |  x   x   x   x  | Default state of new molecule, no conformation found yet
-                    #   |-----------------|
-    Flat = 1  #         |  x   x   x   x  |
-    Half_Chair = 2  #   |  x   -   -   x  |
-    Chair = 3  #        |  x   -   -   x  |
-    Boat = 4  #         |  x   -   -   x  |
-    Twisted_Boat = 5  # |  x   -   x   -  |
-    Envelope = 6  #     |  -   x   -   x  |
-    Twist = 7  #        |  -   x   -   -  |
-    Skew = 8  #         |  -   -   -   x  |
+                    #   | CyH CyP Ben |
+    Undefined = -1  #   |  x   x   x  |     Fallback option when no conformation was found
+    Unanalysed = 0  #   |  x   x   x  | Default state of new molecule, no conformation found yet
+                    #   |-------------|
+    Flat = 1  #         |  x   x   x  |
+    Half_Chair = 2  #   |  x   -   -  |
+    Chair = 3  #        |  x   -   -  |
+    Boat = 4  #         |  x   -   -  |
+    Twisted_Boat = 5  # |  x   -   x  |
+    Envelope = 6  #     |  -   x   -  |
+    Twist = 7  #        |  -   x   -  |
 
 
 class Molecule:
@@ -106,8 +104,6 @@ class Molecule:
                 self.set_conf_cyclopentane()
             case MoleculeType.Benzene:
                 self.set_conf_benzene()
-            case MoleculeType.Oxane:
-                self.set_conf_oxane()
 
     def set_conf_cyclohexane(self) -> None:
         self.conformations = [Conformation.Boat, Conformation.Chair,
@@ -120,17 +116,11 @@ class Molecule:
     def set_conf_benzene(self) -> None:
         self.conformations = [Conformation.Flat] + self.conformations
 
-    def set_conf_oxane(self) -> None:
-        self.conformations = [Conformation.Boat, Conformation.Chair, Conformation.Envelope,
-                              Conformation.Flat, Conformation.Half_Chair, Conformation.Skew] + self.conformations
-
     def get_atom_count(self):
         match self.molecule_type:
             case MoleculeType.Cyclohexane:
                 return 6
             case MoleculeType.Benzene:
-                return 6
-            case MoleculeType.Oxane:
                 return 6
             case MoleculeType.Cyclopentane:
                 return 5

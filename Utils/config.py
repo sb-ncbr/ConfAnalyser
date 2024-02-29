@@ -25,31 +25,6 @@ class BenzeneRecord:
         self.t_flat_in = None
 
 
-class OxaneV2Record:
-    def __init__(self):
-        self.t_flat_angle = None
-
-        self.t_chair_angle = None
-        self.t_chair_degree = None
-
-        self.t_boat_angle = None
-        self.t_boat_s_degree = None
-        self.t_boat_b_degree = None
-
-        self.t_half_angle = None
-        self.t_half_s_degree = None
-        self.t_half_m_degree = None
-        self.t_half_b_degree = None
-
-        self.t_skew_angle = None
-        self.t_skew_degree = None
-
-        self.t_envelope_angle = None
-        self.t_envelope_s_degree = None
-        self.t_envelope_m_degree = None
-        self.t_envelope_b_degree = None
-
-
 class Config:
     """
     Class which loads the properties from the file in the main working directory
@@ -64,13 +39,11 @@ class Config:
         self.cyclohexane = CyclohexaneRecord()
         self.cyclopentane = CyclopentaneRecord()
         self.benzene = BenzeneRecord()
-        self.oxanev2 = OxaneV2Record()
 
         # Aliases to use instead of full names
         self.cp: CyclopentaneRecord = self.cyclopentane
         self.ch: CyclohexaneRecord = self.cyclohexane
         self.b: BenzeneRecord = self.benzene
-        self.o2: OxaneV2Record = self.oxanev2
 
         self.load_config()
 
@@ -90,7 +63,7 @@ class Config:
 
         lines = self.read_file()
 
-        if len(lines) != 37:
+        if len(lines) != 19:
             print("Config file not loaded properly! Delete the `config.txt` file in the folder with main file and try "
                   "again.")
             exit(-1)
@@ -109,28 +82,6 @@ class Config:
         self.cp.t_angle = self.process_line(lines[15])
 
         self.b.t_flat_in = self.process_line(lines[18])
-
-        self.o2.t_flat_angle = self.process_line(lines[21])
-
-        self.o2.t_chair_angle = self.process_line(lines[22])
-        self.o2.t_chair_degree = self.process_line(lines[23])
-
-        self.o2.t_boat_angle = self.process_line(lines[24])
-        self.o2.t_boat_s_degree = self.process_line(lines[25])
-        self.o2.t_boat_b_degree = self.process_line(lines[26])
-
-        self.o2.t_half_angle = self.process_line(lines[27])
-        self.o2.t_half_s_degree = self.process_line(lines[28])
-        self.o2.t_half_m_degree = self.process_line(lines[29])
-        self.o2.t_half_b_degree = self.process_line(lines[30])
-
-        self.o2.t_skew_angle = self.process_line(lines[31])
-        self.o2.t_skew_degree = self.process_line(lines[32])
-
-        self.o2.t_envelope_angle = self.process_line(lines[33])
-        self.o2.t_envelope_s_degree = self.process_line(lines[34])
-        self.o2.t_envelope_m_degree = self.process_line(lines[35])
-        self.o2.t_envelope_b_degree = self.process_line(lines[36])
 
     def get_config_file_path(self) -> str:
         return f"./{self.config_file_name}"
@@ -182,25 +133,7 @@ Angle twisted boat: 10.5
 Angle tolerance: 1
 
 Benzene:
-Tolerance flat in: 0.1
-
-Oxane:
-Flat angle tolerance: 5
-Chair angle tolerance: 10
-Chair expected angle: 35.26
-Boat angle tolerance: 10
-Boat expected small angle: 35.26
-Boat expected big angle: 74.20
-Half chair angle tolerance: 10
-Half chair expected small angle: 9.07
-Half chair expected medium angle: 17.83
-Half chair expected big angle: 42.16
-Skew angle tolerance: 10
-Skew expected angle: 50.84
-Envelope angle tolerance: 10
-Envelope expected small angle: 17.37
-Envelope expected medium angle: 35.26
-Envelope expected big angle: 46.86"""
+Tolerance flat in: 0.1"""
 
         with open(self.get_config_file_path(), "w") as file:
             file.write(template)

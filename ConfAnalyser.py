@@ -78,7 +78,6 @@ def argument_parser():
     group = required.add_mutually_exclusive_group(required=True)
     group.add_argument("--cyclohexane", action="store_true", help="Set molecule type to cyclohexane.")
     group.add_argument("--cyclopentane", action="store_true", help="Set molecule type to cyclopentane.")
-    group.add_argument("--oxane", action="store_true", help="Set molecule type to oxane.")
     group.add_argument("--benzene", action="store_true", help="Set molecule type to benzene.")
 
     optional = parser.add_argument_group('Optional').add_mutually_exclusive_group()
@@ -101,8 +100,6 @@ def main():
         molecule_type = MoleculeType.Cyclohexane
     elif args.cyclopentane:
         molecule_type = MoleculeType.Cyclopentane
-    elif args.oxane:
-        molecule_type = MoleculeType.Oxane
     elif args.benzene:
         molecule_type = MoleculeType.Benzene
     else:

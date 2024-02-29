@@ -4,7 +4,6 @@ from Molecules.benzene import Benzene
 from Molecules.cyclohexane import Cyclohexane
 from Molecules.cyclopentane import Cyclopentane
 from Molecules.Components.molecule import Molecule, MoleculeType
-from Molecules.oxane import Oxane
 from Utils.utils import load_file
 
 def work_file(resources) -> Optional[Molecule]:
@@ -25,8 +24,6 @@ def work_file(resources) -> Optional[Molecule]:
     data = load_file(filename)
 
     match molecule_type:
-        case MoleculeType.Oxane:
-            molecule = Oxane(data)
         case MoleculeType.Cyclohexane:
             molecule = Cyclohexane(data)
         case MoleculeType.Cyclopentane:
