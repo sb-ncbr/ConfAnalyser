@@ -68,11 +68,11 @@ def argument_parser():
                           help=f'Read list of molecules to process from FILE - '
                                f'each line is treated as path to a single PDB file')
     required.add_argument("-n", "--name_list", required=True, type=str, action="store",
-                          help="Read list of names of an atom ring FILE. Each line represents one ligand where"
-                               "first word on each line is the ligand's name and all the following words on the line"
-                               "are treated as atom names. If ligand is not known or if name of the atom is not found"
-                               "in this list, atom will not be processed and will be omitted. In case of multiple"
-                               "name variations, more lines with the same ligand name need to be present. Order of"
+                          help="Read list of names of an atom ring FILE. Each line represents one ligand where "
+                               "first word on each line is the ligand's name and all the following words on the line "
+                               "are treated as atom names. If ligand is not known or if name of the atom is not found "
+                               "in this list, atom will not be processed and will be omitted. In case of multiple "
+                               "name variations, more lines with the same ligand name need to be present. Order of "
                                "atoms decides the order of atoms within the ring.")
 
     group = required.add_mutually_exclusive_group(required=True)
