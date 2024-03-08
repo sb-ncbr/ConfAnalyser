@@ -17,18 +17,19 @@ class MoleculeType(Enum):
 
 
 class Conformation(Enum):
-                    #   | CyH CyP Ben Oxa |
-    Undefined = -1  #   |  x   x   x   x  |     Fallback option when no conformation was found
-    Unanalysed = 0  #   |  x   x   x   x  | Default state of new molecule, no conformation found yet
-                    #   |-----------------|
-    Flat = 1  #         |  x   x   x   x  |
-    Half_Chair = 2  #   |  x   -   -   x  |
-    Chair = 3  #        |  x   -   -   x  |
-    Boat = 4  #         |  x   -   -   x  |
-    Twisted_Boat = 5  # |  x   -   x   -  |
-    Envelope = 6  #     |  -   x   -   x  |
-    Twist = 7  #        |  -   x   -   -  |
-    Skew = 8  #         |  -   -   -   x  |
+                    #    | CyH CyP Ben Oxa |
+    Undefined = -1  #    |  x   x   x   x  |     Fallback option when no conformation was found
+    Unanalysed = 0  #    |  x   x   x   x  | Default state of new molecule, no conformation found yet
+                    #    |-----------------|
+    Flat = 1  #          |  x   x   x   x  |
+    Half_Chair = 2  #    |  x   -   -   x  |
+    Chair = 3  #         |  x   -   -   x  |
+    Boat = 4  #          |  x   -   -   x  |
+    Envelope = 5  #      |  -   x   -   x  |
+    Twist = 6  #         |  -   x   -   -  |
+    Tw_boat_right = 7  # |  x   -   -   -  |
+    Tw_boat_left = 8  #  |  x   -   -   -  |
+    Skew = 9  #          |  -   -   -   x  |
 
 
 class Molecule:
@@ -81,7 +82,7 @@ class Molecule:
             count = sum([1 if x.conformation == conf else 0 for x in Molecule.molecules])
             percentage = (count / total) * 100
             percentage = int(percentage) if percentage % 1 == 0 else percentage
-            print(f"{(conf.name.upper().replace('_', ' ') + ':'):14}{count} ({percentage}%)")
+            print(f"{(conf.name.upper() + ':'):14}{count} ({percentage}%)")
         print(f"{'TOTAL:':14}{total}")
 
     def __str__(self) -> str:
@@ -110,9 +111,10 @@ class Molecule:
                 self.set_conf_oxane()
 
     def set_conf_cyclohexane(self) -> None:
-        self.conformations = [Conformation.Boat, Conformation.Chair,
+        self.conformations = ([Conformation.Boat, Conformation.Chair,
                               Conformation.Flat, Conformation.Half_Chair,
-                              Conformation.Twisted_Boat] + self.conformations
+                              Conformation.Tw_boat_left, Conformation.Tw_boat_right]
+                              + self.conformations)
 
     def set_conf_cyclopentane(self) -> None:
         self.conformations = [Conformation.Envelope, Conformation.Flat, Conformation.Twist] + self.conformations
