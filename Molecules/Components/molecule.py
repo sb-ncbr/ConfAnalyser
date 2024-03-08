@@ -21,13 +21,12 @@ class Conformation(Enum):
     Unanalysed = 0  #    |  x   x   x  | Default state of new molecule, no conformation found yet
                     #    |-------------|
     Flat = 1  #          |  x   x   x  |
-    Half_Chair = 2  #    |  x   -   -  |
+    Half_Chair = 2  #    |  x   x   -  |
     Chair = 3  #         |  x   -   -  |
     Boat = 4  #          |  x   -   -  |
     Envelope = 5  #      |  -   x   -  |
-    Twist = 6  #         |  -   x   -  |
-    Tw_boat_right = 7  # |  x   -   -  |
-    Tw_boat_left = 8  #  |  x   -   -  |
+    Tw_boat_right = 6  # |  x   -   -  |
+    Tw_boat_left = 7  #  |  x   -   -  |
 
 
 class Molecule:
@@ -113,7 +112,8 @@ class Molecule:
                               + self.conformations)
 
     def set_conf_cyclopentane(self) -> None:
-        self.conformations = [Conformation.Envelope, Conformation.Flat, Conformation.Twist] + self.conformations
+        self.conformations = [Conformation.Envelope, Conformation.Flat,
+                              Conformation.Half_Chair] + self.conformations
 
     def set_conf_benzene(self) -> None:
         self.conformations = [Conformation.Flat] + self.conformations

@@ -40,8 +40,8 @@ class Cyclopentane(FiveAtomRing):
             else:
                 self.conformation = Conformation.Undefined
         else:
-            if self.is_twist():
-                self.conformation = Conformation.Twist
+            if self.is_half_chair():
+                self.conformation = Conformation.Half_Chair
             else:
                 self.conformation = Conformation.Undefined
 
@@ -63,9 +63,9 @@ class Cyclopentane(FiveAtomRing):
         """
         return self.basePlane.true_distance_from(self[4]) > self.config.cp.t_out
 
-    def is_twist(self):
+    def is_half_chair(self):
         """
-        Decides whether this molecule's conformation is envelope.
+        Decides whether this molecule's conformation is half chair.
         Twist conformation of molecule is determined by having no plane within the ring.
         """
         left_plane = Plane(self[0], self[1], self[3])
