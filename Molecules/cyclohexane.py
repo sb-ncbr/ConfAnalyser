@@ -42,12 +42,14 @@ class Cyclohexane(SixAtomRing):
             elif self.is_chair():
                 self.conformation = Conformation.Chair
             elif self.is_boat():
-                self.conformation = Conformation.Boat
+                 self.conformation = Conformation.Boat
             else:
                 self.conformation = Conformation.Undefined
         else:
-            if self.is_twisted_boat():
-                self.conformation = Conformation.Twisted_Boat
+            if self.is_tw_boat_right():
+                self.conformation = Conformation.Tw_boat_right
+            elif self.is_tw_boat_left():
+                self.conformation = Conformation.Tw_boat_left
             else:
                 self.conformation = Conformation.Undefined
 
@@ -97,16 +99,42 @@ class Cyclohexane(SixAtomRing):
                left_dist > self.config.ch.t_out and \
                self.right_plane.are_same_side(self[2], self[5])
 
-    def is_twisted_boat(self) -> bool:
+
+    def is_tw_boat_right(self) -> bool:
         """
         Determine whether the molecule's conformation is a twisted boat.
         Twisted boat conformation is determined by having no plane within the ring.
+
+        The sight/left component is determined by having distance of atom 2
+        from right plane be bigger than distance of atom 5 from left plane.
         """
         right_dist = self.right_plane.signed_distance_from(self[2])
         left_dist = self.left_plane.signed_distance_from(self[5])
         tw_angle = abs(dihedral_angle(self[1], self[3], self[4], self[0]))
-        return ((self.config.ch.t_tw_boat_angle - self.config.ch.t_angle) < tw_angle < (self.config.ch.t_tw_boat_angle + self.config.ch.t_angle)
-                and abs(right_dist) > self.config.ch.t_tw_out
-                and abs(left_dist) > self.config.ch.t_tw_out
-                and (right_dist * left_dist) > 0)
+        return ((tw_angle > self.config.ch.t_tw_boat_angle - self.config.ch.t_angle and
+                tw_angle < self.config.ch.t_tw_boat_angle + self.config.ch.t_angle) and
+                abs(right_dist) > self.config.ch.t_tw_out and
+                abs(left_dist) > self.config.ch.t_tw_out and
+                right_dist * left_dist > 0 and
+                right_dist > left_dist)
 
+
+
+    def is_tw_boat_left(self) -> bool:
+        """
+        Determine whether the molecule's conformation is a twisted boat.
+        Twisted boat conformation is determined by having no plane within the ring.
+
+        The sight/left component is determined by having distance of atom 2
+        from right plane be smaller than distance of atom 5 from left plane.
+        """
+        right_dist = self.right_plane.signed_distance_from(self[2])
+        left_dist = self.left_plane.signed_distance_from(self[5])
+        tw_angle = abs(dihedral_angle(self[1], self[3], self[4], self[0]))
+
+        return ((tw_angle > self.config.ch.t_tw_boat_angle - self.config.ch.t_angle and
+                tw_angle < self.config.ch.t_tw_boat_angle + self.config.ch.t_angle) and
+                abs(right_dist) > self.config.ch.t_tw_out and
+                abs(left_dist) > self.config.ch.t_tw_out and
+                right_dist * left_dist > 0 and
+                right_dist < left_dist)
