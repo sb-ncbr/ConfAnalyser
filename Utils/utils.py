@@ -28,7 +28,7 @@ def load_names(file_name: str) -> dict[str, list[set[str]]]:
         ligand = split_line[0]
 
         # special case when ligand only has 2 character long name
-        if ligand[2] == "_":
+        if len(ligand) >= 3 and ligand[2] == "_":
             ligand = ligand[0:2]
 
         if ligand in out:
@@ -38,7 +38,6 @@ def load_names(file_name: str) -> dict[str, list[set[str]]]:
             out[ligand] = []
             for name in split_line[1:]:
                 out[ligand].append({name})
-
     return out
 
 def print_dict(dct: dict[str, set[str]]) -> None:
