@@ -3,6 +3,7 @@
 Import ConfAnalyser and run from another python script:
 ```python
 from ConfAnalyser import ConfAnalyser
+
 ConfAnalyser(paths_file=paths_to_pdbs_path, names_file=atom_names_path,
              molecule_type=ConfAnalyser.MoleculeType.Cyclohexane)
 ```
