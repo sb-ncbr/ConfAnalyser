@@ -82,6 +82,24 @@ class Molecule:
             print(f"{(conf.name.upper() + ':'):14}{count} ({percentage}%)")
         print(f"{'TOTAL:':14}{total}")
 
+    def collect_data(self):
+        dct = dict()
+        Molecule.molecules = [x for x in Molecule.molecules if x is not None]
+        # create empty dict with all possible conformations as keys
+        for conf in self.conformations:
+            dct[conf] = []
+
+        # iterate over molecules, assign them to their conformation
+        for molecule in Molecule.molecules:
+            dct[molecule.conformation].append(molecule.file_name)
+
+        rslt = dict()
+        # rename names in dict so it's strings
+        for conf in self.conformations:
+            rslt[conf.name.lower()] = dct[conf]
+
+        return rslt
+
     def __str__(self) -> str:
         return f"{self.file_name}: {self.conformation.name.upper().replace('_', ' ')}"
 

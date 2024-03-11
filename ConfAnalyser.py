@@ -17,7 +17,7 @@ class ConfAnalyser:
     def __init__(self, paths_file: str, names_file: str,
                  molecule_type: MoleculeType, print_list: bool = False,
                  print_summary: bool = False, print_all: bool = True,
-                 _parallel: bool = False, perf_test: bool = False) -> None:
+                 _parallel: bool = False, perf_test: bool = False):
         """
         Driver class for ConfAnalyser.
 
@@ -49,6 +49,8 @@ class ConfAnalyser:
         self.print_all = print_all
         self.parallel = _parallel or PARALLEL and False  # temporarily disabled, throws error, need to investigate
         self.perf_test = perf_test or PERF_TEST
+
+        self.result_dict = None
 
 
         if self.perf_test:
@@ -104,6 +106,11 @@ class ConfAnalyser:
                 # Call the print of statistics, the call is callable from any
                 # molecule, using 1st one is safe option.
                 Molecule.molecules[0].print_statistics()
+        self.result_dict = Molecule.molecules[0].collect_data()
+
+    def result(self):
+        return self.result_dict
+
 
 
 def argument_parser():
