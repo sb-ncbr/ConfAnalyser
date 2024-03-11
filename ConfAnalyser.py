@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 from os import name as os_name
+from multiprocessing import Pool
 
 from Molecules.Components.molecule import Molecule, MoleculeType
 from Utils.config import Config
@@ -48,10 +49,6 @@ class ConfAnalyser:
         self.print_all = print_all
         self.parallel = _parallel or PARALLEL and False  # temporarily disabled, throws error, need to investigate
         self.perf_test = perf_test or PERF_TEST
-
-
-        if self.parallel:
-            from multiprocessing import Pool
 
 
         if self.perf_test:
