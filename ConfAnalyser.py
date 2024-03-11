@@ -6,8 +6,8 @@ from Utils.config import Config
 from Utils.worker import work_file
 from Utils.utils import load_file, load_names
 
-PERF_TEST = True
-PARALLEL = True
+PERF_TEST = False
+PARALLEL = False
 
 class ConfAnalyser:
     # Exists so users can use this property when calling CA without further imports
@@ -46,7 +46,7 @@ class ConfAnalyser:
         self.print_list = print_list
         self.print_summary = print_summary
         self.print_all = print_all
-        self.parallel = parallel or PARALLEL and False  # temporarily disabled
+        self.parallel = parallel or PARALLEL and False  # temporarily disabled, throws error, need to investigate
         self.perf_test = perf_test or PERF_TEST
 
 
