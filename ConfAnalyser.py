@@ -16,7 +16,7 @@ class ConfAnalyser:
     def __init__(self, paths_file: str, names_file: str,
                  molecule_type: MoleculeType, print_list: bool = False,
                  print_summary: bool = False, print_all: bool = True,
-                 parallel: bool = False, perf_test: bool = False) -> None:
+                 _parallel: bool = False, perf_test: bool = False) -> None:
         """
         Driver class for ConfAnalyser.
 
@@ -46,7 +46,7 @@ class ConfAnalyser:
         self.print_list = print_list
         self.print_summary = print_summary
         self.print_all = print_all
-        self.parallel = parallel or PARALLEL and False  # temporarily disabled, throws error, need to investigate
+        self.parallel = _parallel or PARALLEL and False  # temporarily disabled, throws error, need to investigate
         self.perf_test = perf_test or PERF_TEST
 
 
