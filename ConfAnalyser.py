@@ -1,12 +1,14 @@
 from argparse import ArgumentParser
 from os import name as os_name
 from multiprocessing import Pool
+from sys import platform
 
 from Molecules.Components.molecule import Molecule, MoleculeType
 from Utils.config import Config
 from Utils.worker import work_file
 from Utils.utils import load_file, load_names
 
+# Gives ability to force certain behaviour
 PERF_TEST = False
 PARALLEL = False
 
@@ -17,7 +19,7 @@ class ConfAnalyser:
     def __init__(self, paths_file: str, names_file: str,
                  molecule_type: MoleculeType, print_list: bool = False,
                  print_summary: bool = False, print_all: bool = True,
-                 _parallel: bool = False, perf_test: bool = False):
+                 parallel: bool = False, perf_test: bool = False):
         """
         Driver class for ConfAnalyser.
 
@@ -37,7 +39,9 @@ class ConfAnalyser:
                            their determined conformations
         :param print_summary: after analysis is done, print summary result
         :param print_all:  after analysis is done, print both list and summary
-        :param parallel:   enable parallel processing of data
+        :param parallel:   enable parallel processing of data - this works
+                           well on unix systems, on windows only works when ran
+                           as a console application. Importing disables this.
         :param perf_test:  enable performance test, displaying runtime in seconds
         """
 
@@ -47,10 +51,16 @@ class ConfAnalyser:
         self.print_list = print_list
         self.print_summary = print_summary
         self.print_all = print_all
-        self.parallel = _parallel or PARALLEL and False  # temporarily disabled, throws error, need to investigate
+        self.parallel = parallel or PARALLEL
         self.perf_test = perf_test or PERF_TEST
 
         self.result_dict = None
+
+        # We disable parallel processing on Windows system when not running this
+        # this file directly since windows does not support forking and calling
+        # Pool() would error out horribly. Works fine on unix systems
+        if platform == "win32" and __name__ != "__main__":
+            self.parallel = False
 
 
         if self.perf_test:
