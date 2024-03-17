@@ -3,10 +3,10 @@ from os import name as os_name
 from multiprocessing import Pool
 from sys import platform
 
-from Molecules.Components.molecule import Molecule, MoleculeType
-from Utils.config import Config
-from Utils.worker import work_file
-from Utils.utils import load_file, load_names
+from .Molecules.Components.molecule import Molecule, MoleculeType
+from .Utils.config import Config
+from .Utils.worker import work_file
+from .Utils.utils import load_file, load_names
 
 # Gives ability to force certain behaviour
 PERF_TEST = False
