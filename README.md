@@ -15,7 +15,8 @@ Run as a command-line application:
 
 ## Installation
 
-Copy the content of `electron_density_coverage_analysis` folder from the repository into the folder with same name (`electron_density_coverage_analysis`).
+No installation is required.
+After cloning the repository, change directory to `electron_density_coverage_analysis`.
 
 
 ## Setting up the environment
