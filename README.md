@@ -57,6 +57,7 @@ Activate created conda environment, e.g.
 ```
 conda activate ed-coverage-analysis
 ```
+On Windows, we recommend to use `Anaconda PowerShell Prompt`
 
 From `electron_density_coverage_analysis` directory run the script in e.g. `simple` mode with e.g. `--more_or_equal` setup:
 ```
@@ -93,6 +94,8 @@ Activate created conda environment, e.g.
 ```
 conda activate ed-coverage-analysis
 ```
+
+On Windows, we recommend to use `Anaconda PowerShell Prompt`
 
 From `electron_density_coverage_analysis` directory run e.g.:
 
