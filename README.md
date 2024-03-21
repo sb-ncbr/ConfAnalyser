@@ -40,13 +40,16 @@ Use `electron_density_coverage_analysis.py`, which is a program that determines 
 
 ### Arguments description
 
-#### Positional arguments
+#### Positional arguments (required)
   - `input_cycle_pdb`      Input PDB file with coordinates of a cycle, produced by `PatternQuery`
   - `input_density_ccp4`   Input electron density file for the corresponding protein structure from the PDB in CCP4 format      
 
-#### Optional arguments
+#### Mandatory arguments
+Choose one of the two modes:
   - `-s`                   Simple mode - output is two numbers: first is the number of covered atoms, the second is the total number of atoms in a cycle
-  - `-d`                   Detailed mode - output a sequence of paried values, where the first member of each pair is a serial atom number, and the second member is "y" - if atom is covered, and "n" - if it is not.      
+  - `-d`                   Detailed mode - output a sequence of paried values, where the first member of each pair is a serial atom number, and the second member is "y" - if atom is covered, and "n" - if it is not.
+
+#### Optional arguments
   - `-m`, `--more_or_equal`  Atom is considered to be covered by the electron density when the corresponding intensity is MORE OR EQUAL to the threshold for the isosurface       
   - `-c`, `--closest_voxel`  Instead of trilinear interpolation, the intensity of the closest voxel is used
 
@@ -69,20 +72,19 @@ python electron_density_coverage_analysis.py -sm tests/example_input/single_stru
 
 ## Running analysis for multiple structures
 It is possible to run the analysis for multiple structures using `main.py` script.
+By default, analysis uses trilinear interpolation to infer the electron density value, and considers an atom to be covered by the electron density when the corresponding intensity is MORE than the threshold for the isosurface (1.5 sigma).
 
 Input should follow a specific format:
-<!-- TODO: put image to repo -->
 ![Alt text](electron_density_coverage_analysis/image.png) 
 
 The names of directories should be always as on the picture (`validation_data` as a main folder, then folders for three cycle types, folder `filtered_ligands` in each one, then folders for each ligand, then `patterns` folder in each of them), which contains `.pdb` files of cycles produced by `Pattern Query`. Filename format should always be as in the example: `{ligandID}_{pdbID}_{i}`, ligandID is ligand ID can be up to 3 characters long.
 
 ### Arguments description
 
-#### Positional arguments
+#### Positional arguments (required)
   - `rootdir`      Root directory (e.g. "validation_data") with files containing coordinates of cycles, produced by `PatternQuery`. Directory hierarchy should follow a specific format (see above)
 
 #### Optional arguments
-  - `-s`                   Simple mode - output is two numbers: first is the number of covered atoms, the second is the total number of atoms in a cycle  
   - `-m`, `--more_or_equal`  Atom is considered to be covered by the electron density when the corresponding intensity is MORE OR EQUAL to the threshold for the isosurface       
   - `-c`, `--closest_voxel`  Instead of trilinear interpolation, the intensity of the closest voxel is used
 
