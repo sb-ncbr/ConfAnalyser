@@ -74,9 +74,7 @@ def download_ccp4_multithread(args: argparse.Namespace):
             # print(i)
 
 def process_args(args: argparse.Namespace):
-    s = "-"
-    if args.s:
-        s = s + "s"
+    s = "-s"
     if args.closest_voxel:
         s = s + "c"
     if args.more_or_equal:
