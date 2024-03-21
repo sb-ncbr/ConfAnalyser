@@ -103,13 +103,13 @@ On Windows, we recommend to use `Anaconda PowerShell Prompt`
 From `electron_density_coverage_analysis` directory run e.g.:
 
 ```
-python main.py tests/example_input/validation_data -sm
+python main.py tests/example_input/validation_data -m
 ```
 
 During the analysis procedure, `./ccp4` folder will be created inside `electron_density_coverage_analysis`, in which `.ccp4` files for structures corresponding to ligands, will be downloaded
 
 Output of the script will be collected in `./output` folder including:
- - Three `.csv` files for each ligand type, e.g. `cyclopentane_params-sm_analysis_output.csv`, in names of which parameters (`sm`) for analysis are specified.
+ - Three `.csv` files for each ligand type, e.g. `cyclopentane_params-sm_analysis_output.csv`, in names of which parameters (`m` in this case) for analysis are specified.
  Each `.csv` file follow a specific format, e.g.:
 
   06L_8gxp_0,06L,2;5\
