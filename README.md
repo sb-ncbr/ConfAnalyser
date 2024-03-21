@@ -119,7 +119,7 @@ Output of the script will be collected in `./output` folder including:
 
   where first column specifies ligand PDB file name without extension, second column specifies ligand, third column specifies coverage - first number is a number of covered atoms, then semicolon, then the total number of atoms in a cycle
 
- - `no_ccp4_pdb_ids.txt` file with PDB IDs for which `.ccp4` files were not found at PDBe (`https://www.ebi.ac.uk/pdbe/coordinates/files/`)
+ - `no_ccp4_pdb_ids.txt` file with PDB IDs for which `.ccp4` files were not found at PDBe.
 
 
 
