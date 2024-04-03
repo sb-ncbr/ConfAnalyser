@@ -14,9 +14,6 @@ parser.add_argument('input_cycle_pdb', type=str, help='Input PDB file with coord
 parser.add_argument('input_density_ccp4', type=str, help='Input electron density file for the corresponding protein structure from the PDB in CCP4 format')
 
 args = parser.parse_args()
-#for arg in args:
-#    print(arg)
-# read input files
 str = gemmi.read_pdb(args.input_cycle_pdb)
 map = gemmi.read_ccp4_map(args.input_density_ccp4)
 map.setup()
