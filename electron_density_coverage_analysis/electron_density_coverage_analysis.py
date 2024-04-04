@@ -58,15 +58,16 @@ def run_analysis(args: argparse.Namespace):
             # print(covered_atoms_count, total_atom_count, sep=";", end='')
 
         if args.d:
+            output = []
             for model in str:
                 for chain in model:
                     for res in chain:
                         for atom in res:
                             if determine_atom_coverage(atom.pos, map, sigma_lvl, args):
-                                output = f'{atom.serial};y;'
+                                output.append(f'{atom.serial};y;')
                                 # print(atom.serial, "y", sep=";", end=';')
                             else:
-                                output = f'{atom.serial};n;'
+                                output.append(f'{atom.serial};n;')
                                 # print(atom.serial, "n", sep=";", end=';')
     except Exception as e:
         logging.error(e, stack_info=True, exc_info=True)
@@ -84,10 +85,14 @@ def main():
     parser.add_argument('input_density_ccp4', type=str, help='Input electron density file for the corresponding protein structure from the PDB in CCP4 format')
 
     args = parser.parse_args()
-    print(args)
+    # print(args)
     output = run_analysis(args)
     return output
 
 if __name__ == '__main__':
     output = main()
-    print(output)
+    if isinstance(output, str):
+        print(output)
+    elif isinstance(output, list):
+        for i in output:
+            print(i)
