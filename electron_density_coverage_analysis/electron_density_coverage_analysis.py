@@ -29,9 +29,7 @@ def run_analysis(args: argparse.Namespace):
     try:
         output = None
         str = gemmi.read_pdb(args.input_cycle_pdb)
-        # breaks here - failed to read all data
         map = gemmi.read_ccp4_map(args.input_density_ccp4)
-        # fix this part
         # map.setup()
         map.setup(float('nan'))
 
