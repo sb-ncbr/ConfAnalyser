@@ -102,7 +102,7 @@ python main.py tests/example_input/validation_data -m
 This will run the analysis in `--more_or_equal` mode.
 
 Output of the script will be collected in `./output` folder including:
- - Three `.csv` files for each ligand type, e.g. `cyclopentane_params_sm_analysis_output.csv`, in names of which parameters (`m` in this case) for analysis are specified.
+ - Three `.csv` files for each ligand type, e.g. `cyclopentane_params_m_analysis_output.csv`, in names of which parameters (`m` in this case) for analysis are specified.
  Each `.csv` file follow a specific format, e.g.:
 
   06L_8gxp_0,06L,2;5\
