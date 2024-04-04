@@ -19,20 +19,12 @@ No installation is required.
 After cloning the repository, change directory to `electron_density_coverage_analysis`.
 
 
-## Setting up the environment
+## Requirements
 
-Create conda environment from `environment.yaml`, e.g.:
-
-You can use [Conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)
-
+Python version 3.10 or higher
+`gemmi` package versions 0.6.5, can be installed using pip, e.g.:
 ```
-conda env create -f environment.yaml
-```
-
-Or [Mamba](https://mamba.readthedocs.io/en/latest/installation.html)
-
-```
-mamba env create -f environment.yaml
+pip install gemmi==0.6.5
 ```
 
 ## Running analysis for a single structure
@@ -56,11 +48,6 @@ Choose one of the two modes:
 
 ### Example of running analysis for a single structure
 
-Activate created conda environment, e.g.
-
-```
-conda activate ed-coverage-analysis
-```
 On Windows, we recommend to use `Anaconda PowerShell Prompt`
 
 From `electron_density_coverage_analysis` directory run the script in e.g. `simple` mode with e.g. `--more_or_equal` setup:
@@ -92,24 +79,26 @@ The names of directories should be always as on the picture (`validation_data` a
 
 ### Example of running analysis for a multiple structures
 
-Activate created conda environment, e.g.
-
-```
-conda activate ed-coverage-analysis
-```
-
 On Windows, we recommend to use `Anaconda PowerShell Prompt`
+
+Download `.ccp4` files for each of the ligands in input folder and put them into `./ccp4` folder. E.g. for `tests/example_input/validation_data` input, you should download the following `.ccp4` files:
+[4omc](https://www.ebi.ac.uk/pdbe/coordinates/files/4omc.ccp4)
+[3v8d](https://www.ebi.ac.uk/pdbe/coordinates/files/3v8d.ccp4)
+[8gdi](https://www.ebi.ac.uk/pdbe/coordinates/files/8gdi.ccp4)
+[8gxh](https://www.ebi.ac.uk/pdbe/coordinates/files/8gxh.ccp4)
+[8gxi](https://www.ebi.ac.uk/pdbe/coordinates/files/8gxi.ccp4)
+[8gxp](https://www.ebi.ac.uk/pdbe/coordinates/files/8gxp.ccp4)
+
 
 From `electron_density_coverage_analysis` directory run e.g.:
 
 ```
 python main.py tests/example_input/validation_data -m
 ```
-
-During the analysis procedure, `./ccp4` folder will be created inside `electron_density_coverage_analysis`, in which `.ccp4` files for structures corresponding to ligands, will be downloaded
+This will run the analysis in `--more_or_equal` mode.
 
 Output of the script will be collected in `./output` folder including:
- - Three `.csv` files for each ligand type, e.g. `cyclopentane_params-sm_analysis_output.csv`, in names of which parameters (`m` in this case) for analysis are specified.
+ - Three `.csv` files for each ligand type, e.g. `cyclopentane_params_sm_analysis_output.csv`, in names of which parameters (`m` in this case) for analysis are specified.
  Each `.csv` file follow a specific format, e.g.:
 
   06L_8gxp_0,06L,2;5\
@@ -118,8 +107,6 @@ Output of the script will be collected in `./output` folder including:
   0GV_3v8d_0,0GV,5;5
 
   where first column specifies ligand PDB file name without extension, second column specifies ligand, third column specifies coverage - first number is a number of covered atoms, then semicolon, then the total number of atoms in a cycle
-
- - `no_ccp4_pdb_ids.txt` file with PDB IDs for which `.ccp4` files were not found at PDBe.
 
 
 
