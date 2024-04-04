@@ -81,6 +81,11 @@ The names of directories should be always as on the picture (`validation_data` a
 
 On Windows, we recommend to use `Anaconda PowerShell Prompt`
 
+Create `./ccp4` folder in `electron_density_coverage_analysis` folder:
+```
+mkdir ccp4
+```
+
 Download `.ccp4` files for each of the ligands in input folder and put them into `./ccp4` folder. E.g. for `tests/example_input/validation_data` input, you should download the following `.ccp4` files:
  - [4omc](https://www.ebi.ac.uk/pdbe/coordinates/files/4omc.ccp4)
  - [3v8d](https://www.ebi.ac.uk/pdbe/coordinates/files/3v8d.ccp4)
