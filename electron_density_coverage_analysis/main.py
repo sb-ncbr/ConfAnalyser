@@ -155,7 +155,7 @@ def main():
     parser.add_argument('-c', '--closest_voxel', action='store_true', help='Instead of trilinear interpolation, the intensity of the closest voxel is used')
     
     args = parser.parse_args()
-    
+    _create_output_folder()
     run_analysis(args)
 
 if __name__ == '__main__':
