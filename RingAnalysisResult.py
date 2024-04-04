@@ -6,7 +6,6 @@ def statistic_RMSD(ring_type):
     file_path = 'cyclohexane_rmsd_chart.csv'
     output_file = 'CH_minimum.csv'
 
-    # Read and clean data
     RMSD_data = pd.read_csv(file_path, delimiter=';')
     RMSD_data = RMSD_data.dropna(axis=1)
 
@@ -17,10 +16,9 @@ def statistic_RMSD(ring_type):
         new_headers = ['Ligand ID', 'Ring ID', 'HALF_CHAIR', 'FLAT', 'CHAIR', 'TW_BOAT_L','TW_BOAT_R', 'BOAT'] 
     else:
         raise ValueError("Invalid ring type. Please specify cyclopentane, cyclohexane or benzene.")
-
     RMSD_data.columns = new_headers
 
-    # find minimum
+    # Find minimum
     values_columns = RMSD_data.columns[2:]
     RMSD_data['MinValue'] = RMSD_data[values_columns].min(axis=1)
     RMSD_data['Conformation'] = RMSD_data[values_columns].idxmin(axis=1)
@@ -34,20 +32,15 @@ def addResolution(RMSD_data):
     output_file = 'CH_RMSD_resolution.csv'
     trash_file = 'trash_resolution_CH.csv'
 
-    # Read input CSV files into DataFrames
     file2 = pd.read_csv(file_informatin_path,  sep=',', quoting=3, quotechar='"', error_bad_lines=False, warn_bad_lines=True)
 
-    # Extract Entry ID from Ring ID in file1 using regex
+    # Extract Entry ID from Ring ID and clean column
     RMSD_data['Entry ID_x'] = RMSD_data['Ring ID'].str.extract(r'_(\w+)_\d+')
     RMSD_data['Entry ID'] = RMSD_data['Entry ID_x'].str.upper()
-
-    # Function to strip quoting from values
     def strip_quoting(value):
         if isinstance(value, str):
             return value.strip('"')
         return value
-
-    # Apply the function to each element in the DataFrames
     file2 = file2.applymap(strip_quoting)
     file2['Resolution (Å)'] = file2['Resolution (Å)'].str.extract('(\d+\.\d+)').astype(float)
 
@@ -73,7 +66,6 @@ def addElDensity(merged_resolution):
     output_file = 'CH_RMSD_Res_ED_s.csv'
     trash_file = 'trash_ED_CH-s.csv'
     
-    # Read input CSV files into DataFrames
     file2 = pd.read_csv(file2_path, delimiter=';')
     new_headers = ['Entry', 'Atoms in ring']
     file2.columns = new_headers
@@ -99,7 +91,7 @@ def Summary(ring_type, merged_coverage):
     df = merged_coverage
 
     # Create a folder for the output files
-    output_folder = 'Cyclohexane_s'
+    output_folder = output_name
     os.makedirs(output_folder, exist_ok=True)
 
     if ring_type == 'cyclopentane':
@@ -107,11 +99,19 @@ def Summary(ring_type, merged_coverage):
         name_1 = 'stats_resolution_2_or_less_coverage_5.txt'
         name_2 = 'Resolution_2_or_less_Coverage_5'
         name_3 = 'Stat_Resol_2_or_less_Cover_5'
-    elif ring_type == 'cyclohexane' or ring_type == 'benzene':
+        output_name = 'Cyclopentane'
+    elif ring_type == 'cyclohexane':
         x = 6
         name_1 = 'stats_resolution_2_or_less_coverage_6.txt'
         name_2 = 'Resolution_2_or_less_Coverage_6'
         name_3 = 'Stat_Resol_2_or_less_Cover_6'
+        output_name = 'Cyclohexane'
+    elif ring_type == 'benzene':
+        x = 6
+        name_1 = 'stats_resolution_2_or_less_coverage_6.txt'
+        name_2 = 'Resolution_2_or_less_Coverage_6'
+        name_3 = 'Stat_Resol_2_or_less_Cover_6'
+        output_name = 'Benzene'
     else:
         raise ValueError("Invalid ring type. Please specify cyclopentane, cyclohexane or benzene.")
 
@@ -122,12 +122,10 @@ def Summary(ring_type, merged_coverage):
 
     # Create a CSV file for rows where Resolution (Å) is equal or less than 2 and Coverage is 5 or 6
     output_file_path_2 = os.path.join(output_folder, 'resolution_2_or_less_coverage_6.csv')
-    #df_resolution_2_or_less_coverage_5 = df[(df['Resolution'] <= 2) & (df['Coverage'] == 5)] #cyclopentane
-    df_resolution_2_or_less_coverage_5 = df[(df['Resolution (Å)'] <= 2) & (df['Coverage'] == x)] #yclohexane
+    df_resolution_2_or_less_coverage_5 = df[(df['Resolution (Å)'] <= 2) & (df['Coverage'] == x)] 
     df_resolution_2_or_less_coverage_5.to_csv(output_file_path_2, sep=';', index=False)
 
     # Create text files with statistics for different values in the Conformation column
-    # Statistics for the input file
     stats_input_file = df['Conformation'].value_counts()
     total_values_input_file = stats_input_file.sum()
     percentage_input_file = (stats_input_file / total_values_input_file) * 100
@@ -174,7 +172,7 @@ def Summary(ring_type, merged_coverage):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Calculate RMSD statistics for CP or CH rings.')
-    parser.add_argument('ring_type', choices=['cyclopentane', 'cyclohexane', 'benzene'], help='Specify the ring type (CP or CH)')
+    parser.add_argument('ring_type', choices=['cyclopentane', 'cyclohexane', 'benzene'], help='Specify the ring type (cyclopentane, cyclohexane or benzene)')
     
     args = parser.parse_args()
     
@@ -187,9 +185,5 @@ if __name__ == '__main__':
     # Call addElDensity
     coverage_result = addElDensity(resolution_result)
 
+    # Call Summary
     excel_file_path = Summary(args.ring_type, coverage_result)
-
-    # Print results if needed
-    print(rmsd_result)
-    print(resolution_result)
-    print(coverage_result)
