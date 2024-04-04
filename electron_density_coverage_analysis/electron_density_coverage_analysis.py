@@ -4,6 +4,9 @@ import gemmi
 import statistics as st
 import math
 
+def run_as_function(args: argparse.Namespace):
+    return run_analysis(args)
+
 # compare intensity, corresponding to the given position, to the threshold for isosurface (MORE vs MORE OR EQUAL)
 def determine_atom_coverage(pos, map, sigma_lvl, args: argparse.Namespace):
     try:
@@ -24,7 +27,9 @@ def get_intensity(pos, map, args: argparse.Namespace):
 
 def run_analysis(args: argparse.Namespace):
     try:
+        output = None
         str = gemmi.read_pdb(args.input_cycle_pdb)
+        # breaks here - failed to read all data
         map = gemmi.read_ccp4_map(args.input_density_ccp4)
         # fix this part
         # map.setup()
@@ -50,7 +55,9 @@ def run_analysis(args: argparse.Namespace):
                             if determine_atom_coverage(atom.pos, map, sigma_lvl, args):
                                 covered_atoms_count = covered_atoms_count + 1
 
-            print(covered_atoms_count, total_atom_count, sep=";", end='')
+            
+            output = f'{covered_atoms_count};{total_atom_count}'
+            # print(covered_atoms_count, total_atom_count, sep=";", end='')
 
         if args.d:
             for model in str:
@@ -58,11 +65,15 @@ def run_analysis(args: argparse.Namespace):
                     for res in chain:
                         for atom in res:
                             if determine_atom_coverage(atom.pos, map, sigma_lvl, args):
-                                print(atom.serial, "y", sep=";", end=';')
+                                output = f'{atom.serial};y;'
+                                # print(atom.serial, "y", sep=";", end=';')
                             else:
-                                print(atom.serial, "n", sep=";", end=';')
+                                output = f'{atom.serial};n;'
+                                # print(atom.serial, "n", sep=";", end=';')
     except Exception as e:
         logging.error(e, stack_info=True, exc_info=True)
+
+    return output
 
 def main():
     parser = argparse.ArgumentParser(description="Determines electron density coverage of a cycle. By default, uses trilinear interpolation to infer the electron density value, and considers an atom to be covered by the electron density when the corresponding intensity is MORE than the threshold for the isosurface (1.5 sigma)")
@@ -75,8 +86,10 @@ def main():
     parser.add_argument('input_density_ccp4', type=str, help='Input electron density file for the corresponding protein structure from the PDB in CCP4 format')
 
     args = parser.parse_args()
-    
-    run_analysis(args)
+    print(args)
+    output = run_analysis(args)
+    return output
 
 if __name__ == '__main__':
-    main()
+    output = main()
+    print(output)
