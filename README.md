@@ -82,12 +82,12 @@ The names of directories should be always as on the picture (`validation_data` a
 On Windows, we recommend to use `Anaconda PowerShell Prompt`
 
 Download `.ccp4` files for each of the ligands in input folder and put them into `./ccp4` folder. E.g. for `tests/example_input/validation_data` input, you should download the following `.ccp4` files:
-[4omc](https://www.ebi.ac.uk/pdbe/coordinates/files/4omc.ccp4)
-[3v8d](https://www.ebi.ac.uk/pdbe/coordinates/files/3v8d.ccp4)
-[8gdi](https://www.ebi.ac.uk/pdbe/coordinates/files/8gdi.ccp4)
-[8gxh](https://www.ebi.ac.uk/pdbe/coordinates/files/8gxh.ccp4)
-[8gxi](https://www.ebi.ac.uk/pdbe/coordinates/files/8gxi.ccp4)
-[8gxp](https://www.ebi.ac.uk/pdbe/coordinates/files/8gxp.ccp4)
+ - [4omc](https://www.ebi.ac.uk/pdbe/coordinates/files/4omc.ccp4)
+ - [3v8d](https://www.ebi.ac.uk/pdbe/coordinates/files/3v8d.ccp4)
+ - [8gdi](https://www.ebi.ac.uk/pdbe/coordinates/files/8gdi.ccp4)
+ - [8gxh](https://www.ebi.ac.uk/pdbe/coordinates/files/8gxh.ccp4)
+ - [8gxi](https://www.ebi.ac.uk/pdbe/coordinates/files/8gxi.ccp4)
+ - [8gxp](https://www.ebi.ac.uk/pdbe/coordinates/files/8gxp.ccp4)
 
 
 From `electron_density_coverage_analysis` directory run e.g.:
