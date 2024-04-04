@@ -14,7 +14,7 @@ CCP4_DIR = Path('./ccp4')
 EXE = Path('./electron_density_coverage_analysis.py')
 
 OUTPUT_DIR = Path('./output')
-NO_CCP4_AVAILABLE_FILE = Path(OUTPUT_DIR / 'no_ccp4_pdb_ids.txt')
+# NO_CCP4_AVAILABLE_FILE = Path(OUTPUT_DIR / 'no_ccp4_pdb_ids.txt')
 CPU_COUNT = cpu_count() / 2
 
 def _create_output_folder():
@@ -35,44 +35,44 @@ def _download_single_file(data: tuple):
     except:
         return pdb_id
 
-def download_ccp4_multithread(args: argparse.Namespace):
-    try:
-        _create_output_folder()
+# def download_ccp4_multithread(args: argparse.Namespace):
+#     try:
+#         _create_output_folder()
         
-        input_dir = Path(args.rootdir)
-        pdbe_base_link = 'https://www.ebi.ac.uk/pdbe/coordinates/files/'
-        no_ccp4_available_file = str(NO_CCP4_AVAILABLE_FILE.resolve())
+#         input_dir = Path(args.rootdir)
+#         pdbe_base_link = 'https://www.ebi.ac.uk/pdbe/coordinates/files/'
+#         no_ccp4_available_file = str(NO_CCP4_AVAILABLE_FILE.resolve())
 
-        l = []
+#         l = []
 
-        for dirname, dirs, files in os.walk(str(input_dir.resolve())):
-            for f in files:
-                if f.endswith(".pdb"):
-                    pdb_id = f.split("_")[1]
-                    link = pdbe_base_link + pdb_id + ".ccp4"
-                    path = str(Path(CCP4_DIR / f'{pdb_id}.ccp4'))
+#         for dirname, dirs, files in os.walk(str(input_dir.resolve())):
+#             for f in files:
+#                 if f.endswith(".pdb"):
+#                     pdb_id = f.split("_")[1]
+#                     link = pdbe_base_link + pdb_id + ".ccp4"
+#                     path = str(Path(CCP4_DIR / f'{pdb_id}.ccp4'))
 
-                    l.append((link, path, pdb_id))
+#                     l.append((link, path, pdb_id))
 
-        # removing duplicates
-        l = set(l)
-        l = list(l)
+#         # removing duplicates
+#         l = set(l)
+#         l = list(l)
 
-        pool = Pool(int(CPU_COUNT))
-        results = pool.map(_download_single_file, l)
+#         pool = Pool(int(CPU_COUNT))
+#         results = pool.map(_download_single_file, l)
 
-        results_without_none = [x for x in results if x is not None]
+#         results_without_none = [x for x in results if x is not None]
 
-        pool.close()
-        pool.join()
+#         pool.close()
+#         pool.join()
 
-        with open(no_ccp4_available_file, 'w') as w:
-            for i in results_without_none:
-                w.write(i + '\n')
-                # print(i)
+#         with open(no_ccp4_available_file, 'w') as w:
+#             for i in results_without_none:
+#                 w.write(i + '\n')
+#                 # print(i)
 
-    except Exception as e:
-        logging.error(e, stack_info=True, exc_info=True)
+#     except Exception as e:
+#         logging.error(e, stack_info=True, exc_info=True)
 
 def process_args(args: argparse.Namespace):
     try:
