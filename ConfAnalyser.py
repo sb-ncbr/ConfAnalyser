@@ -1,7 +1,11 @@
 from argparse import ArgumentParser
 from os import name as os_name
 from multiprocessing import Pool
-from sys import platform
+from sys import platform, path
+from pathlib import Path
+
+# Adds the directory of project to the running path to resolve relative imports
+path.append(str(Path(__file__).parents[0]))
 
 from Molecules.Components.molecule import Molecule, MoleculeType
 from Utils.config import Config
