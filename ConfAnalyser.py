@@ -68,8 +68,8 @@ class ConfAnalyser:
     def run(self) -> None:
         """
         Main runner function, loads all the data, creates dataset to run the
-        program on, initializes config file and then runs the program
-        either in single-thread mode or in multi-thread mode.
+        program on, initializes config file and then runs the program in
+        either single-thread or in multi-thread mode.
         """
 
         # Load data from the drive
