@@ -172,6 +172,7 @@ def main():
 
     print_list = args.list
     print_summary = args.summary
+    # if both print_list and print_summary is False (no switches used), print all by default
     print_all = args.all or (not print_list and not print_summary)
     parallel = args.parallel
 
