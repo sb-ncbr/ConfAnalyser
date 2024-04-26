@@ -72,7 +72,7 @@ class Molecule:
         been processed and their conformation has been decided.
         """
         print("SUMMARY\n-------")
-        # Remove possible None-s from list from cases where file was ommited
+        # Remove possible None-s from list from cases where file was omitted
         Molecule.molecules = [x for x in Molecule.molecules if x is not None]
         total = len(Molecule.molecules)
         for conf in self.conformations:
