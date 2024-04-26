@@ -173,7 +173,7 @@ class Molecule:
             for i in range(atom_count):
                 if atom.name in self.names[self.ligand][i]:
                     if new_lst[i] is not None:
-                        print(f"{atom.name} atom found twice!", file=stderr)
+                        print(f"{self.file_name}: ommited - {atom.name} atom found twice!", file=stderr)
                         self.is_valid = False
                         return
                     new_lst[i] = atom
