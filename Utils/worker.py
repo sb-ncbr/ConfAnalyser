@@ -8,7 +8,7 @@ from Utils.utils import load_file
 
 def work_file(resources) -> Optional[Molecule]:
     """
-    Process a single file and analyze it.
+    Process a single file and analyze it.git
     """
     file = resources[0]
     molecule_type = resources[3]
@@ -33,5 +33,5 @@ def work_file(resources) -> Optional[Molecule]:
         return molecule
 
     else:
-        print(f"{filename}: ommited")
+        print(f"{filename}: omitted")
         return None
