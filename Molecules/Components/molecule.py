@@ -163,9 +163,10 @@ class Molecule:
         """
         Validates whether all the atoms of a molecule have their name
         present in the names file and then creates the ordering
-        of atoms based on the order from the names file. In case of
-        duplicate names within the same index of atom position, error
-        out and cancel processing of this molecule as a result.
+        of atoms based on the order from the names file. In case of a duplicate
+        atom name found within a single ligand structure, this molecule is
+        marked as invalid and error is printed out. This is to remove
+        overlapping cycles from being tested for conformations.
         """
         atom_count = self.get_atom_count()
         new_lst = [None for _ in range(atom_count)]
